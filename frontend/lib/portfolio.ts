@@ -16,7 +16,7 @@ export const projects: Project[] = [
         description:
             "A modern digital business platform offering government services, tax consultancy, software development, AI solutions and business consultancy.",
         technologies: ["Next.js", "TypeScript", "Tailwind CSS"],
-        image: "/portfolio/giltech.jpg",
+        image: "/portfolio/project2.jpg",
     },
     {
         id: 2,
