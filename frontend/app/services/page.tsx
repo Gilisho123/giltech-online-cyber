@@ -7,6 +7,8 @@ import {
     X,
 } from "lucide-react";
 import { services } from "@/lib/services";
+import Card from "@/components/ui/Card";
+import Button from "@/components/ui/Button";
 
 export default function ServicesPage() {
 
@@ -125,8 +127,8 @@ export default function ServicesPage() {
                             key={category}
                             onClick={() => setSelectedCategory(category)}
                             className={`rounded-full px-5 py-2 text-sm font-semibold transition ${selectedCategory === category
-                                    ? "bg-cyan-500 text-black shadow-lg shadow-cyan-500/30"
-                                    : "border border-cyan-500/30 text-cyan-400 hover:bg-cyan-500/20"
+                                ? "bg-cyan-500 text-black shadow-lg shadow-cyan-500/30"
+                                : "border border-cyan-500/30 text-cyan-400 hover:bg-cyan-500/20"
                                 }`}
                         >
                             {category}
@@ -148,6 +150,50 @@ export default function ServicesPage() {
                     </span>
                     services
                 </p>
+                {/* Services Grid */}
+
+                <div className="grid gap-8 pb-24 md:grid-cols-2 lg:grid-cols-3">
+
+                    {filteredServices.map((service) => (
+
+                        <Card
+                            key={service.id}
+                            className="transition-all duration-300 hover:-translate-y-2 hover:border-cyan-500/40"
+                        >
+
+                            <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-cyan-500/20 text-3xl">
+                                {service.title.charAt(0)}
+                            </div>
+
+                            <span className="mt-6 inline-block rounded-full bg-cyan-500/20 px-3 py-1 text-sm text-cyan-400">
+                                {service.category}
+                            </span>
+
+                            <h3 className="mt-4 text-2xl font-bold">
+                                {service.title}
+                            </h3>
+
+                            <p className="mt-4 text-slate-300">
+                                {service.description}
+                            </p>
+
+                            <Button className="mt-8 w-full">
+
+                                <span className="flex items-center justify-center gap-2">
+
+                                    Learn More
+
+                                    <ArrowRight size={18} />
+
+                                </span>
+
+                            </Button>
+
+                        </Card>
+
+                    ))}
+
+                </div>
 
             </section>
         </main>
