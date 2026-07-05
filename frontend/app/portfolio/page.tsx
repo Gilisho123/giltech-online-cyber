@@ -2,6 +2,8 @@ import Card from "@/components/ui/Card";
 import Button from "@/components/ui/Button";
 import { ArrowRight } from "lucide-react";
 import { projects } from "@/lib/portfolio";
+import Image from "next/image";
+
 
 export default function PortfolioPage() {
     return (
@@ -36,7 +38,14 @@ export default function PortfolioPage() {
 
                         <Card key={project.id}>
 
-                            <div className="h-52 rounded-2xl bg-slate-800"></div>
+                            <div className="relative h-52 overflow-hidden rounded-2xl">
+                                <Image
+                                    src={project.image}
+                                    alt={project.title}
+                                    fill
+                                    className="object-cover transition duration-500 hover:scale-110"
+                                />
+                            </div>
 
                             <div className="mt-6">
 
@@ -53,30 +62,21 @@ export default function PortfolioPage() {
                                 </p>
 
                                 <div className="mt-6 flex flex-wrap gap-2">
-
                                     {project.technologies.map((tech) => (
-
                                         <span
                                             key={tech}
                                             className="rounded-full border border-cyan-500/30 px-3 py-1 text-xs text-cyan-400"
                                         >
                                             {tech}
                                         </span>
-
                                     ))}
-
                                 </div>
 
                                 <Button>
-
-                                    <span className="mt-8 flex items-center gap-2">
-
+                                    <span className="flex items-center gap-2">
                                         View Project
-
                                         <ArrowRight size={18} />
-
                                     </span>
-
                                 </Button>
 
                             </div>

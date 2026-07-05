@@ -16,7 +16,7 @@ export const projects: Project[] = [
         description:
             "A modern digital business platform offering government services, tax consultancy, software development, AI solutions and business consultancy.",
         technologies: ["Next.js", "TypeScript", "Tailwind CSS"],
-        image: "/images/projects/giltech.jpg",
+        image: "/portfolio/giltech.jpg",
     },
     {
         id: 2,
@@ -25,7 +25,7 @@ export const projects: Project[] = [
         description:
             "Professional research, consultancy and data analytics platform serving businesses, students and organizations.",
         technologies: ["WordPress", "SEO", "Analytics"],
-        image: "/images/projects/datafolks.jpg",
+        image: "/portfolio/project1.jpg",
         website: "https://datafolksconsultancy.com",
     },
     {
@@ -35,6 +35,6 @@ export const projects: Project[] = [
         description:
             "Interactive dashboards and analytical reports for tax compliance and decision making.",
         technologies: ["Power BI", "Excel", "Python"],
-        image: "/images/projects/dashboard.jpg",
+        image: "/portfolio/dashboard.jpg",
     },
 ];
