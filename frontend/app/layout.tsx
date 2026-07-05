@@ -1,8 +1,12 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
+
 import "./globals.css";
 
 import { siteConfig } from "@/lib/site";
+import Navbar from "@/components/layout/Navbar";
+import Footer from "@/components/layout/Footer";
+import WhatsAppButton from "@/components/layout/WhatsAppButton";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -59,7 +63,17 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={inter.className}>{children}</body>
+      <body className={`${inter.className} bg-[#081225] text-white`}>
+        <Navbar />
+
+        <main className="min-h-screen">
+          {children}
+        </main>
+
+        <Footer />
+
+        <WhatsAppButton />
+      </body>
     </html>
   );
 }
