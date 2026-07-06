@@ -90,11 +90,19 @@ export default function CallToAction() {
                         <div className="rounded-xl bg-white/10 p-4 backdrop-blur-md">
                             ✓ Trusted by Businesses
                         </div>
+                        <div className="relative overflow-hidden rounded-[40px] bg-gradient-to-r from-cyan-600 via-blue-600 to-purple-700 px-10 py-20">
+
+                            {/* Decorative Glow */}
+
+                            <div className="absolute -top-20 -left-20 h-80 w-80 rounded-full bg-cyan-400/20 blur-3xl" />
+
+                            <div className="absolute -bottom-20 -right-20 h-80 w-80 rounded-full bg-fuchsia-500/20 blur-3xl" />
+
+                        </div>
+
 
                     </div>
-
                 </div>
-
             </Container>
 
         </section>
