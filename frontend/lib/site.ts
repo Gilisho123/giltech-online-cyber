@@ -12,7 +12,7 @@ export const siteConfig = {
 
     logo: "/images/logo.png",
 
-    favicon: "/favicon.png",
+    favicon: "/favicon.ico",
 
     email: "info@giltech.co.ke",
 
