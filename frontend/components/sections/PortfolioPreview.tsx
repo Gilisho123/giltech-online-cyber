@@ -1,21 +1,25 @@
+import Image from "next/image";
 const projects = [
   {
     title: "Business Websites",
     category: "Web Development",
     description:
       "Modern, responsive websites for businesses, NGOs, schools and organizations.",
+    image: "/projects/business.png",
   },
   {
     title: "Data Analytics Dashboards",
     category: "Data Analysis",
     description:
       "Interactive dashboards built using Power BI, Excel and Python for better decision making.",
+    image: "/projects/dash.png",
   },
   {
     title: "Tax & Government Services",
     category: "Tax Consultancy",
     description:
       "Professional support for KRA, eCitizen, NTSA and other government digital services.",
+    image: "/projects/tax.jpg",
   },
 ];
 
