@@ -5,7 +5,7 @@ import Container from "@/components/ui/Container";
 
 export default function CallToAction() {
     return (
-        <section className="relative overflow-hidden py-28">
+        <section className="mx-auto max-w-7xl px-6 pb-24">
 
             {/* Background */}
             <div className="absolute inset-0 bg-gradient-to-r from-cyan-600 via-blue-600 to-purple-700" />
