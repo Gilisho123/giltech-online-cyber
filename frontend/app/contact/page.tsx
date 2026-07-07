@@ -14,6 +14,7 @@ export default function ContactPage() {
     const [form, setForm] = useState({
         from_name: "",
         from_email: "",
+        phone: "",
         subject: "",
         message: "",
     });
@@ -38,13 +39,35 @@ export default function ContactPage() {
             !form.subject ||
             !form.message
         ) {
-            alert("Please fill in all fields.");
+            alert("Please fill in all required fields.");
             return;
         }
 
         try {
             setLoading(true);
 
+            // Save to Supabase Database
+            const response = await fetch("/api/contact", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                    name: form.from_name,
+                    email: form.from_email,
+                    phone: form.phone,
+                    subject: form.subject,
+                    message: form.message,
+                }),
+            });
+
+            const result = await response.json();
+
+            if (!response.ok) {
+                throw new Error(result.message);
+            }
+
+            // Send EmailJS Notification
             await emailjs.send(
                 process.env.NEXT_PUBLIC_EMAILJS_SERVICE_ID!,
                 process.env.NEXT_PUBLIC_EMAILJS_TEMPLATE_ID!,
@@ -57,6 +80,7 @@ export default function ContactPage() {
             setForm({
                 from_name: "",
                 from_email: "",
+                phone: "",
                 subject: "",
                 message: "",
             });
@@ -122,7 +146,9 @@ export default function ContactPage() {
 
                     <div className="rounded-3xl border border-cyan-500/20 bg-white/5 p-8 text-center">
                         <Clock className="mx-auto text-cyan-400" size={40} />
-                        <h3 className="mt-6 text-xl font-bold">Business Hours</h3>
+                        <h3 className="mt-6 text-xl font-bold">
+                            Business Hours
+                        </h3>
                         <p className="mt-3 text-slate-300">
                             Mon – Sat <br />
                             8:00 AM – 6:00 PM
@@ -165,6 +191,15 @@ export default function ContactPage() {
                             className="rounded-xl border border-cyan-500/20 bg-[#101c33] p-4 outline-none focus:border-cyan-500"
                         />
 
+                        <input
+                            type="tel"
+                            name="phone"
+                            value={form.phone}
+                            onChange={handleChange}
+                            placeholder="Phone Number"
+                            className="rounded-xl border border-cyan-500/20 bg-[#101c33] p-4 outline-none focus:border-cyan-500"
+                        />
+
                     </div>
 
                     <input
@@ -198,7 +233,6 @@ export default function ContactPage() {
                 </form>
 
             </section>
-
             {/* CTA */}
             <section className="mx-auto max-w-7xl px-6 pb-24">
 
