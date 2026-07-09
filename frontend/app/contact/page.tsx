@@ -68,12 +68,22 @@ export default function ContactPage() {
             }
 
             // Send EmailJS Notification
-            await emailjs.send(
-                process.env.NEXT_PUBLIC_EMAILJS_SERVICE_ID!,
-                process.env.NEXT_PUBLIC_EMAILJS_TEMPLATE_ID!,
-                form,
-                process.env.NEXT_PUBLIC_EMAILJS_PUBLIC_KEY!
-            );
+            try {
+                await emailjs.send(
+                    process.env.NEXT_PUBLIC_EMAILJS_SERVICE_ID!,
+                    process.env.NEXT_PUBLIC_EMAILJS_TEMPLATE_ID!,
+                    {
+                        from_name: form.from_name,
+                        from_email: form.from_email,
+                        phone: form.phone,
+                        subject: form.subject,
+                        message: form.message,
+                    },
+                    process.env.NEXT_PUBLIC_EMAILJS_PUBLIC_KEY!
+                );
+            } catch (err) {
+                console.error("EmailJS Error:", err);
+            }
 
             alert("✅ Message sent successfully!");
 
@@ -86,7 +96,7 @@ export default function ContactPage() {
             });
         } catch (error) {
             console.error(error);
-            alert("❌ Failed to send message. Please try again.");
+            alert(error instanceof Error ? error.message : "Something went wrong.");
         } finally {
             setLoading(false);
         }
