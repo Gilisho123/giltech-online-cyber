@@ -59,11 +59,11 @@ export async function GET() {
 
         return NextResponse.json(contacts);
     } catch (error) {
-        console.error(error);
+        console.error("GET Contacts Error:", error);
 
         return NextResponse.json(
             {
-                message: "Failed to fetch contacts",
+                message: error instanceof Error ? error.message : "Unknown error",
             },
             {
                 status: 500,
