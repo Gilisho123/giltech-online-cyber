@@ -98,3 +98,31 @@ export async function PATCH(request: Request) {
         );
     }
 }
+export async function DELETE(request: Request) {
+    try {
+        const { id } = await request.json();
+
+        await prisma.contact.delete({
+            where: {
+                id,
+            },
+        });
+
+        return NextResponse.json({
+            success: true,
+        });
+
+    } catch (error) {
+
+        console.error(error);
+
+        return NextResponse.json(
+            {
+                message: "Failed to delete contact",
+            },
+            {
+                status: 500,
+            }
+        );
+    }
+}

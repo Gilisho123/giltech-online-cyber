@@ -71,6 +71,44 @@ export default function ContactsPage() {
             console.error(error);
         }
     }
+    async function deleteContact(id: number) {
+
+        const confirmed = window.confirm(
+            "Are you sure you want to permanently delete this contact?"
+        );
+
+        if (!confirmed) return;
+
+        try {
+
+            const res = await fetch("/api/contact", {
+                method: "DELETE",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                    id,
+                }),
+            });
+
+            if (!res.ok) {
+                throw new Error("Delete failed");
+            }
+
+            setContacts((previous) =>
+                previous.filter((contact) => contact.id !== id)
+            );
+
+            setShowModal(false);
+
+        } catch (error) {
+
+            console.error(error);
+
+            alert("Failed to delete contact.");
+
+        }
+    }
 
     const filteredContacts = useMemo(() => {
         return contacts.filter((contact) => {
@@ -409,7 +447,14 @@ export default function ContactsPage() {
                                     {selectedContact.message}
                                 </div>
                             </div>
-                            <div className="mt-8 flex justify-end">
+                            <div className="mt-8 flex justify-end gap-4">
+
+                                <button
+                                    onClick={() => deleteContact(selectedContact.id)}
+                                    className="rounded-xl border border-red-500 bg-red-500/20 px-6 py-3 font-bold text-red-300 transition hover:bg-red-600 hover:text-white"
+                                >
+                                    Delete
+                                </button>
 
                                 {selectedContact.status === "New" && (
 
