@@ -71,3 +71,30 @@ export async function GET() {
         );
     }
 }
+export async function PATCH(request: Request) {
+    try {
+        const { id, status } = await request.json();
+
+        const contact = await prisma.contact.update({
+            where: {
+                id,
+            },
+            data: {
+                status,
+            },
+        });
+
+        return NextResponse.json(contact);
+    } catch (error) {
+        console.error(error);
+
+        return NextResponse.json(
+            {
+                message: "Failed to update contact",
+            },
+            {
+                status: 500,
+            }
+        );
+    }
+}
