@@ -26,7 +26,15 @@ export default function ContactsPage() {
             try {
                 const res = await fetch("/api/contact");
                 const data = await res.json();
-                setContacts(data);
+
+                console.log("API Response:", data);
+
+                if (Array.isArray(data)) {
+                    setContacts(data);
+                } else {
+                    console.error("API Error:", data);
+                    setContacts([]);
+                }
             } catch (error) {
                 console.error(error);
             } finally {
@@ -111,6 +119,8 @@ export default function ContactsPage() {
     }
 
     const filteredContacts = useMemo(() => {
+        if (!Array.isArray(contacts)) return [];
+
         return contacts.filter((contact) => {
             const keyword = search.toLowerCase();
 

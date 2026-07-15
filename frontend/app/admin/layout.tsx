@@ -1,4 +1,7 @@
+"use client";
+
 import Link from "next/link";
+import { signOut } from "next-auth/react";
 import {
     LayoutDashboard,
     Mail,
@@ -29,6 +32,7 @@ export default function AdminLayout({
                     </p>
                 </div>
 
+
                 <nav className="flex-1 px-4 py-6 space-y-2">
 
                     <Link
@@ -39,6 +43,7 @@ export default function AdminLayout({
                         Dashboard
                     </Link>
 
+
                     <Link
                         href="/admin/contacts"
                         className="flex items-center gap-3 rounded-xl px-4 py-3 hover:bg-cyan-600 transition"
@@ -46,6 +51,7 @@ export default function AdminLayout({
                         <Mail size={20} />
                         Contacts
                     </Link>
+
 
                     <Link
                         href="#"
@@ -55,6 +61,7 @@ export default function AdminLayout({
                         Services
                     </Link>
 
+
                     <Link
                         href="#"
                         className="flex items-center gap-3 rounded-xl px-4 py-3 hover:bg-cyan-600 transition"
@@ -62,6 +69,7 @@ export default function AdminLayout({
                         <Users size={20} />
                         Users
                     </Link>
+
 
                     <Link
                         href="#"
@@ -73,9 +81,19 @@ export default function AdminLayout({
 
                 </nav>
 
+
+                {/* Logout */}
+
                 <div className="border-t border-slate-700 p-4">
 
-                    <button className="flex w-full items-center justify-center gap-2 rounded-xl bg-red-600 px-4 py-3 font-semibold hover:bg-red-700 transition">
+                    <button
+                        onClick={() =>
+                            signOut({
+                                callbackUrl: "/admin/login",
+                            })
+                        }
+                        className="flex w-full items-center justify-center gap-2 rounded-xl bg-red-600 px-4 py-3 font-semibold hover:bg-red-700 transition"
+                    >
 
                         <LogOut size={18} />
 
@@ -85,13 +103,14 @@ export default function AdminLayout({
 
                 </div>
 
+
             </aside>
+
 
             {/* Main Content */}
 
             <div className="flex-1">
 
-                {/* Top Bar */}
 
                 <header className="flex h-20 items-center justify-between border-b bg-white px-8 shadow-sm">
 
@@ -109,7 +128,6 @@ export default function AdminLayout({
 
                 </header>
 
-                {/* Page Content */}
 
                 <main className="p-8">
 
@@ -117,7 +135,9 @@ export default function AdminLayout({
 
                 </main>
 
+
             </div>
+
 
         </div>
     );
