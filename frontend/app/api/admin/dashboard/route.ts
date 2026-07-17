@@ -3,6 +3,7 @@ import { prisma } from "@/lib/prisma";
 
 export async function GET() {
     try {
+
         const totalContacts = await prisma.contact.count();
 
         const newContacts = await prisma.contact.count({
@@ -27,11 +28,31 @@ export async function GET() {
             by: ["email"],
         });
 
+        // NEW
+        const totalServices = await prisma.service.count();
+
+        const totalPortfolio = await prisma.portfolio.count();
+
+        const totalAdmins = await prisma.admin.count();
+
+        const recentContacts = await prisma.contact.findMany({
+            orderBy: {
+                createdAt: "desc",
+            },
+            take: 5,
+        });
+
         return NextResponse.json({
             totalContacts,
             newContacts,
             todaysContacts,
             uniqueClients: uniqueClients.length,
+
+            // NEW
+            totalServices,
+            totalPortfolio,
+            totalAdmins,
+            recentContacts,
         });
 
     } catch (error) {
@@ -46,5 +67,6 @@ export async function GET() {
                 status: 500,
             }
         );
+
     }
 }
