@@ -109,6 +109,38 @@ export default function ServicesPage() {
         }
 
     }
+    async function toggleFeatured(id: number) {
+
+        try {
+
+            const res = await fetch(
+                "/api/services/toggle-featured",
+                {
+                    method: "PATCH",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify({ id }),
+                }
+            );
+
+            if (!res.ok) {
+
+                throw new Error();
+
+            }
+
+            await loadServices();
+
+        } catch (error) {
+
+            console.error(error);
+
+            alert("Failed to update featured status.");
+
+        }
+
+    }
 
     const filteredServices = useMemo(() => {
 
@@ -432,23 +464,17 @@ export default function ServicesPage() {
 
                                     <td className="px-6 py-5 whitespace-nowrap">
 
-                                        {service.featured ? (
+                                        <button
+                                            onClick={() => toggleFeatured(service.id)}
+                                            className={`rounded-full px-4 py-2 text-sm font-bold transition ${service.featured
+                                                ? "bg-green-600 text-white hover:bg-green-700"
+                                                : "bg-slate-700 text-slate-300 hover:bg-slate-600"
+                                                }`}
+                                        >
 
-                                            <span className="rounded-full border border-yellow-500/20 bg-yellow-500/10 px-3 py-1 text-yellow-300">
+                                            {service.featured ? "ON" : "OFF"}
 
-                                                ⭐ Featured
-
-                                            </span>
-
-                                        ) : (
-
-                                            <span className="rounded-full border border-slate-600 px-3 py-1 text-slate-400">
-
-                                                Normal
-
-                                            </span>
-
-                                        )}
+                                        </button>
 
                                     </td>
 

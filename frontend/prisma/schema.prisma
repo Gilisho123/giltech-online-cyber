@@ -47,3 +47,36 @@ model Admin {
   password  String
   createdAt DateTime @default(now())
 }
+
+model SiteSettings {
+  id             Int      @id @default(1)
+  companyName    String
+  email          String
+  phone          String
+  whatsapp       String
+  address        String
+
+  googleMaps     String
+
+  facebook       String
+  twitter        String
+  instagram      String
+  linkedin       String
+  tiktok         String
+  youtube        String
+
+  logo           String?
+  favicon        String?
+
+  heroTitle      String
+  heroSubtitle   String
+
+  footerText     String
+  copyright      String
+
+  seoTitle       String
+  seoDescription String
+
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+}
