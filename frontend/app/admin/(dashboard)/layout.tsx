@@ -58,23 +58,118 @@ export default function AdminLayout({
 
             {/* Mobile Header */}
 
-            <header className="flex items-center justify-between bg-[#081225] px-5 py-4 text-white md:hidden">
+            {/* Desktop Header */}
 
-                <h1 className="text-xl font-black text-cyan-400">
-                    Giltech Admin
-                </h1>
+            <header
+                className="
+    hidden
+    md:flex
+    h-20
+    items-center
+    justify-between
+    border-b
+    border-slate-200
+    bg-white
+    px-8
+    shadow-sm
+    sticky
+    top-0
+    z-30
+"
+            >
 
+                {/* Left */}
 
-                <button
-                    onClick={() => setOpen(true)}
-                    className="rounded-lg p-2 hover:bg-white/10"
-                >
-                    <Menu />
-                </button>
+                <div>
+
+                    <h2 className="text-3xl font-black text-slate-800">
+                        Giltech Admin
+                    </h2>
+
+                    <p className="text-slate-500">
+                        Manage your website professionally.
+                    </p>
+
+                </div>
+
+                {/* Right */}
+
+                <div className="flex items-center gap-5">
+
+                    <button
+                        className="
+            relative
+            rounded-full
+            bg-slate-100
+            p-3
+            hover:bg-slate-200
+            transition
+            "
+                    >
+
+                        🔔
+
+                        <span
+                            className="
+                absolute
+                right-2
+                top-2
+                h-2
+                w-2
+                rounded-full
+                bg-red-500
+                "
+                        />
+
+                    </button>
+
+                    <div
+                        className="
+            flex
+            items-center
+            gap-3
+            rounded-2xl
+            border
+            border-slate-200
+            px-4
+            py-2
+            "
+                    >
+
+                        <div
+                            className="
+                flex
+                h-11
+                w-11
+                items-center
+                justify-center
+                rounded-full
+                bg-cyan-100
+                text-lg
+                font-bold
+                text-cyan-700
+                "
+                        >
+                            A
+                        </div>
+
+                        <div>
+
+                            <h3 className="font-bold text-slate-800">
+                                Administrator
+                            </h3>
+
+                            <p className="text-sm text-slate-500">
+                                Super Admin
+                            </p>
+
+                        </div>
+
+                    </div>
+
+                </div>
 
             </header>
-
-
 
             {/* Overlay */}
 
