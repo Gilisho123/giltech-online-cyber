@@ -4,9 +4,7 @@ import { Inter } from "next/font/google";
 import "./globals.css";
 
 import { siteConfig } from "@/lib/site";
-import Navbar from "@/components/layout/Navbar";
-import Footer from "@/components/layout/Footer";
-import WhatsAppButton from "@/components/layout/WhatsAppButton";
+import AppShell from "./AppShell";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -58,21 +56,13 @@ export const metadata: Metadata = {
 
 export default function RootLayout({
   children,
-}: Readonly<{
+}: {
   children: React.ReactNode;
-}>) {
+}) {
   return (
     <html lang="en">
       <body className={`${inter.className} bg-[#081225] text-white`}>
-        <Navbar />
-
-        <main className="min-h-screen">
-          {children}
-        </main>
-
-        <Footer />
-
-        <WhatsAppButton />
+        <AppShell>{children}</AppShell>
       </body>
     </html>
   );
