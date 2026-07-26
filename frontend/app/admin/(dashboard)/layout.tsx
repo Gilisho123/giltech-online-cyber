@@ -1,8 +1,10 @@
 "use client";
 
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { useState } from "react";
 import { signOut } from "next-auth/react";
+
 import {
     LayoutDashboard,
     Mail,
@@ -12,13 +14,15 @@ import {
     LogOut,
     Menu,
     X,
+    Bell,
 } from "lucide-react";
 
-export default function AdminLayout({
-    children,
-}: {
+interface Props {
     children: React.ReactNode;
-}) {
+}
+
+export default function AdminLayout({ children }: Props) {
+    const pathname = usePathname();
 
     const [open, setOpen] = useState(false);
 
@@ -50,159 +54,41 @@ export default function AdminLayout({
         },
     ];
 
-
     return (
-
         <div className="min-h-screen bg-slate-100">
-
-
-            {/* Mobile Header */}
-
-            {/* Desktop Header */}
-
-            <header
-                className="
-    hidden
-    md:flex
-    h-20
-    items-center
-    justify-between
-    border-b
-    border-slate-200
-    bg-white
-    px-8
-    shadow-sm
-    sticky
-    top-0
-    z-30
-"
-            >
-
-                {/* Left */}
-
-                <div>
-
-                    <h2 className="text-3xl font-black text-slate-800">
-                        Giltech Admin
-                    </h2>
-
-                    <p className="text-slate-500">
-                        Manage your website professionally.
-                    </p>
-
-                </div>
-
-                {/* Right */}
-
-                <div className="flex items-center gap-5">
-
-                    <button
-                        className="
-            relative
-            rounded-full
-            bg-slate-100
-            p-3
-            hover:bg-slate-200
-            transition
-            "
-                    >
-
-                        🔔
-
-                        <span
-                            className="
-                absolute
-                right-2
-                top-2
-                h-2
-                w-2
-                rounded-full
-                bg-red-500
-                "
-                        />
-
-                    </button>
-
-                    <div
-                        className="
-            flex
-            items-center
-            gap-3
-            rounded-2xl
-            border
-            border-slate-200
-            px-4
-            py-2
-            "
-                    >
-
-                        <div
-                            className="
-                flex
-                h-11
-                w-11
-                items-center
-                justify-center
-                rounded-full
-                bg-cyan-100
-                text-lg
-                font-bold
-                text-cyan-700
-                "
-                        >
-                            A
-                        </div>
-
-                        <div>
-
-                            <h3 className="font-bold text-slate-800">
-                                Administrator
-                            </h3>
-
-                            <p className="text-sm text-slate-500">
-                                Super Admin
-                            </p>
-
-                        </div>
-
-                    </div>
-
-                </div>
-
-            </header>
 
             {/* Overlay */}
 
             {open && (
-
                 <div
                     onClick={() => setOpen(false)}
-                    className="fixed inset-0 z-40 bg-black/60 md:hidden"
+                    className="fixed inset-0 z-40 bg-black/60 backdrop-blur-sm"
                 />
-
             )}
-
-
 
             {/* Sidebar */}
 
             <aside
                 className={`
-                    fixed left-0 top-0 z-50
-                    h-screen w-72
+                    fixed
+                    left-0
+                    top-0
+                    z-50
+                    h-screen
+                    w-72
                     bg-[#081225]
                     text-white
-                    transition-transform duration-300
+                    shadow-2xl
+                    transition-transform
+                    duration-300
 
                     ${open ? "translate-x-0" : "-translate-x-full"}
-
-                    md:translate-x-0
                 `}
             >
 
+                {/* Logo */}
 
                 <div className="flex items-center justify-between border-b border-slate-700 p-6">
-
 
                     <div>
 
@@ -210,32 +96,31 @@ export default function AdminLayout({
                             Giltech Admin
                         </h1>
 
-                        <p className="text-sm text-slate-400">
+                        <p className="mt-1 text-sm text-slate-400">
                             Administration Panel
                         </p>
 
                     </div>
 
-
                     <button
                         onClick={() => setOpen(false)}
-                        className="md:hidden"
+                        className="rounded-lg p-2 transition hover:bg-white/10"
                     >
-                        <X />
+                        <X size={22} />
                     </button>
-
 
                 </div>
 
-
+                {/* Navigation */}
 
                 <nav className="space-y-2 p-4">
-
 
                     {menu.map((item) => {
 
                         const Icon = item.icon;
 
+                        const active =
+                            pathname === item.href;
 
                         return (
 
@@ -243,12 +128,18 @@ export default function AdminLayout({
                                 key={item.name}
                                 href={item.href}
                                 onClick={() => setOpen(false)}
-                                className="
-                                flex items-center gap-3
-                                rounded-xl px-4 py-3
-                                transition
-                                hover:bg-cyan-600
-                                "
+                                className={`
+                                    flex items-center gap-3
+                                    rounded-xl
+                                    px-4
+                                    py-3
+                                    transition
+
+                                    ${active
+                                        ? "bg-cyan-600 text-white"
+                                        : "hover:bg-cyan-600/40"
+                                    }
+                                `}
                             >
 
                                 <Icon size={20} />
@@ -260,94 +151,185 @@ export default function AdminLayout({
                         );
 
                     })}
-
-
                 </nav>
 
+                {/* Logout */}
 
-
-                <div className="absolute bottom-0 w-full border-t border-slate-700 p-4">
-
+                <div className="absolute bottom-0 left-0 w-full border-t border-slate-700 p-4">
 
                     <button
-                        onClick={() => signOut({
-                            callbackUrl: "/admin/login"
-                        })}
+                        onClick={() =>
+                            signOut({
+                                callbackUrl: "/admin/login",
+                            })
+                        }
                         className="
-                        flex w-full
-                        items-center justify-center gap-2
-                        rounded-xl
-                        bg-red-600
-                        px-4 py-3
-                        font-semibold
-                        hover:bg-red-700
-                        transition
+                            flex
+                            w-full
+                            items-center
+                            justify-center
+                            gap-2
+                            rounded-xl
+                            bg-red-600
+                            px-4
+                            py-3
+                            font-semibold
+                            transition
+                            hover:bg-red-700
                         "
                     >
-
                         <LogOut size={18} />
 
                         Logout
-
                     </button>
-
 
                 </div>
 
-
             </aside>
 
+            {/* Main Content */}
 
+            <div className="flex min-h-screen flex-1 flex-col">
 
-
-            {/* Main Area */}
-
-            <main className="md:ml-72">
-
-
-                {/* Desktop Header */}
+                {/* Header */}
 
                 <header
                     className="
-                    hidden md:flex
-                    h-20
-                    items-center
-                    justify-between
-                    border-b
-                    bg-white
-                    px-8
-                    shadow-sm
+                        sticky
+                        top-0
+                        z-30
+                        flex
+                        h-20
+                        items-center
+                        justify-between
+                        border-b
+                        border-slate-200
+                        bg-white
+                        px-5
+                        shadow-sm
+                        md:px-8
                     "
                 >
 
-                    <div>
+                    {/* Left */}
 
-                        <h2 className="text-2xl font-bold text-slate-800">
-                            Admin Dashboard
-                        </h2>
+                    <div className="flex items-center gap-4">
 
-                        <p className="text-sm text-slate-500">
-                            Welcome back, Administrator
-                        </p>
+                        <button
+                            onClick={() => setOpen(true)}
+                            className="
+                                rounded-xl
+                                bg-slate-100
+                                p-3
+                                transition
+                                hover:bg-slate-200
+                            "
+                        >
+                            <Menu size={22} />
+                        </button>
+
+                        <div>
+
+                            <h2 className="text-2xl font-black text-slate-800">
+                                Giltech Admin
+                            </h2>
+
+                            <p className="text-sm text-slate-500">
+                                Website Administration
+                            </p>
+
+                        </div>
 
                     </div>
 
+                    {/* Right */}
+
+                    <div className="flex items-center gap-5">
+
+                        <button
+                            className="
+                                relative
+                                rounded-full
+                                bg-slate-100
+                                p-3
+                                transition
+                                hover:bg-slate-200
+                            "
+                        >
+
+                            <Bell size={20} />
+
+                            <span
+                                className="
+                                    absolute
+                                    right-2
+                                    top-2
+                                    h-2
+                                    w-2
+                                    rounded-full
+                                    bg-red-500
+                                "
+                            />
+
+                        </button>
+
+                        <div
+                            className="
+                                flex
+                                items-center
+                                gap-3
+                                rounded-2xl
+                                border
+                                border-slate-200
+                                bg-white
+                                px-3
+                                py-2
+                            "
+                        >
+
+                            <div
+                                className="
+                                    flex
+                                    h-11
+                                    w-11
+                                    items-center
+                                    justify-center
+                                    rounded-full
+                                    bg-cyan-100
+                                    font-bold
+                                    text-cyan-700
+                                "
+                            >
+                                A
+                            </div>
+
+                            <div className="hidden sm:block">
+
+                                <h3 className="font-bold text-slate-800">
+                                    Administrator
+                                </h3>
+
+                                <p className="text-sm text-slate-500">
+                                    Super Admin
+                                </p>
+
+                            </div>
+
+                        </div>
+
+                    </div>
 
                 </header>
 
+                {/* Page Content */}
 
-
-                <section className="p-5 md:p-8">
-
+                <main className="flex-1 p-4 md:p-8">
                     {children}
 
-                </section>
+                </main>
 
-
-            </main>
-
+            </div>
 
         </div>
-
     );
 }
