@@ -17,9 +17,14 @@ import AdminActionButton from "@/components/admin/AdminActionButton";
 import AdminTable from "@/components/admin/AdminTable";
 import AdminEmptyState from "@/components/admin/AdminEmptyState";
 
+import UserModal from "./components/UserModal";
+import PasswordModal from "./components/PasswordModal";
+
 interface AdminUser {
 
     id: number;
+
+    username: string;
 
     name: string;
 
