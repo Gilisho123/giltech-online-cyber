@@ -1,15 +1,24 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
+
 import {
     Plus,
-    Search,
     Star,
     Briefcase,
     LayoutGrid,
     Pencil,
     Trash2,
 } from "lucide-react";
+
+import AdminPageHeader from "@/components/admin/AdminPageHeader";
+import AdminStatCard from "@/components/admin/AdminStatCard";
+import AdminSearch from "@/components/admin/AdminSearch";
+import AdminTable from "@/components/admin/AdminTable";
+import AdminLoading from "@/components/admin/AdminLoading";
+import AdminEmptyState from "@/components/admin/AdminEmptyState";
+import AdminActionButton from "@/components/admin/AdminActionButton";
+import StatusBadge from "@/components/admin/StatusBadge";
 
 import ServiceModal from "@/components/admin/ServiceModal";
 import DeleteModal from "@/components/admin/DeleteModal";
@@ -58,9 +67,13 @@ export default function ServicesPage() {
             const data = await res.json();
 
             if (Array.isArray(data)) {
+
                 setServices(data);
+
             } else {
+
                 setServices([]);
+
             }
 
         } catch (error) {
@@ -88,11 +101,7 @@ export default function ServicesPage() {
                 }
             );
 
-            if (!res.ok) {
-
-                throw new Error();
-
-            }
+            if (!res.ok) throw new Error();
 
             await loadServices();
 
@@ -109,6 +118,7 @@ export default function ServicesPage() {
         }
 
     }
+
     async function toggleFeatured(id: number) {
 
         try {
@@ -117,18 +127,16 @@ export default function ServicesPage() {
                 "/api/services/toggle-featured",
                 {
                     method: "PATCH",
+
                     headers: {
                         "Content-Type": "application/json",
                     },
+
                     body: JSON.stringify({ id }),
                 }
             );
 
-            if (!res.ok) {
-
-                throw new Error();
-
-            }
+            if (!res.ok) throw new Error();
 
             await loadServices();
 
@@ -146,8 +154,7 @@ export default function ServicesPage() {
 
         return services.filter((service) => {
 
-            const keyword =
-                search.toLowerCase();
+            const keyword = search.toLowerCase();
 
             const matchesSearch =
 
@@ -173,13 +180,9 @@ export default function ServicesPage() {
 
                 ||
 
-                service.category ===
-                selectedCategory;
+                service.category === selectedCategory;
 
-            return (
-                matchesSearch &&
-                matchesCategory
-            );
+            return matchesSearch && matchesCategory;
 
         });
 
@@ -189,8 +192,7 @@ export default function ServicesPage() {
         selectedCategory,
     ]);
 
-    const totalServices =
-        services.length;
+    const totalServices = services.length;
 
     const featuredServices =
         services.filter(
@@ -200,8 +202,7 @@ export default function ServicesPage() {
     const categories =
         new Set(
             services.map(
-                (service) =>
-                    service.category
+                (service) => service.category
             )
         ).size;
 
@@ -214,10 +215,7 @@ export default function ServicesPage() {
             new Set(
 
                 services.map(
-
-                    (service) =>
-                        service.category
-
+                    (service) => service.category
                 )
 
             )
@@ -229,379 +227,367 @@ export default function ServicesPage() {
     if (loading) {
 
         return (
-
-            <div className="flex h-[70vh] items-center justify-center text-xl font-bold text-cyan-400">
-
-                Loading services...
-
-            </div>
-
+            <AdminLoading
+                cards={3}
+                rows={8}
+            />
         );
 
     }
+
+    const columns = [
+
+        {
+            key: "title",
+            label: "Service",
+        },
+
+        {
+            key: "category",
+            label: "Category",
+        },
+
+        {
+            key: "featured",
+            label: "Featured",
+        },
+
+        {
+            key: "created",
+            label: "Created",
+        },
+
+        {
+            key: "actions",
+            label: "Actions",
+        },
+
+    ];
+
     return (
 
-        <main className="min-h-screen bg-[#081225] p-6 text-white">
+        <div className="space-y-8">
 
-            {/* Header */}
+            <AdminPageHeader
 
-            <div className="mb-10 flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-between">
+                badge="SERVICE MANAGEMENT"
 
-                <div>
+                title="Website Services"
 
-                    <span className="rounded-full border border-cyan-500 px-4 py-2 text-sm font-semibold text-cyan-400">
-                        SERVICE MANAGEMENT
-                    </span>
+                description="Manage all services displayed on your website."
 
-                    <h1 className="mt-5 text-4xl font-black">
-                        Website Services
-                    </h1>
+            />
 
-                    <p className="mt-3 text-slate-400">
-                        Manage all services displayed on the website.
-                    </p>
+            <div className="grid gap-6 sm:grid-cols-2 xl:grid-cols-3">
 
-                </div>
+                <AdminStatCard
 
-                <button
-                    onClick={() => {
+                    title="Total Services"
 
-                        setSelectedService(null);
+                    value={totalServices}
 
-                        setShowModal(true);
+                    icon={<LayoutGrid size={28} />}
 
-                    }}
-                    className="flex items-center justify-center gap-2 rounded-xl bg-cyan-500 px-6 py-3 font-bold text-black transition hover:bg-cyan-400"
-                >
+                />
 
-                    <Plus size={20} />
+                <AdminStatCard
 
-                    Add Service
+                    title="Featured Services"
 
-                </button>
+                    value={featuredServices}
 
-            </div>
+                    icon={<Star size={28} />}
 
-            {/* Statistics */}
+                    color="bg-yellow-100 text-yellow-600"
 
-            <div className="mb-10 grid gap-6 sm:grid-cols-2 xl:grid-cols-3">
+                />
 
-                <div className="rounded-3xl border border-cyan-500/20 bg-[#101c33] p-6">
+                <AdminStatCard
 
-                    <LayoutGrid className="mb-4 text-cyan-400" />
+                    title="Categories"
 
-                    <p className="text-slate-400">
+                    value={categories}
 
-                        Total Services
+                    icon={<Briefcase size={28} />}
 
-                    </p>
+                    color="bg-green-100 text-green-600"
 
-                    <h2 className="mt-2 text-5xl font-black text-cyan-400">
-
-                        {totalServices}
-
-                    </h2>
-
-                </div>
-
-                <div className="rounded-3xl border border-cyan-500/20 bg-[#101c33] p-6">
-
-                    <Star className="mb-4 text-yellow-400" />
-
-                    <p className="text-slate-400">
-
-                        Featured Services
-
-                    </p>
-
-                    <h2 className="mt-2 text-5xl font-black text-yellow-400">
-
-                        {featuredServices}
-
-                    </h2>
-
-                </div>
-
-                <div className="rounded-3xl border border-cyan-500/20 bg-[#101c33] p-6">
-
-                    <Briefcase className="mb-4 text-green-400" />
-
-                    <p className="text-slate-400">
-
-                        Categories
-
-                    </p>
-
-                    <h2 className="mt-2 text-5xl font-black text-green-400">
-
-                        {categories}
-
-                    </h2>
-
-                </div>
+                />
 
             </div>
 
-            {/* Search & Filter */}
+            <AdminSearch
 
-            <div className="mb-8 grid gap-4 lg:grid-cols-[1fr_260px]">
+                search={search}
 
-                <div className="relative">
+                onSearch={setSearch}
 
-                    <Search
-                        size={20}
-                        className="absolute left-5 top-1/2 -translate-y-1/2 text-cyan-400"
-                    />
+                placeholder="Search services..."
 
-                    <input
-                        type="text"
-                        placeholder="Search services..."
-                        value={search}
-                        onChange={(e) => setSearch(e.target.value)}
-                        className="w-full rounded-2xl border border-cyan-500/20 bg-[#101c33] py-4 pl-14 pr-5 text-white outline-none focus:border-cyan-400"
-                    />
+                filterValue={selectedCategory}
 
-                </div>
+                onFilterChange={setSelectedCategory}
 
-                <select
+                filterOptions={categoryList}
 
-                    value={selectedCategory}
+                actions={
 
-                    onChange={(e) =>
-                        setSelectedCategory(
-                            e.target.value
-                        )
-                    }
+                    <AdminActionButton
 
-                    className="rounded-2xl border border-cyan-500/20 bg-[#101c33] px-5 text-white outline-none focus:border-cyan-400"
+                        icon={<Plus size={18} />}
 
-                >
+                        onClick={() => {
 
-                    {categoryList.map((category) => (
+                            setSelectedService(null);
 
-                        <option
-                            key={category}
-                            value={category}
-                        >
+                            setShowModal(true);
 
-                            {category}
+                        }}
 
-                        </option>
+                    >
 
-                    ))}
+                        Add Service
 
-                </select>
+                    </AdminActionButton>
 
-            </div>
-            <div className="overflow-hidden rounded-3xl border border-cyan-500/20 bg-[#101c33]">
+                }
 
-                <div className="overflow-x-auto">
+            />
+            <AdminTable
 
-                    <table className="min-w-full">
+                columns={columns}
 
-                        <thead className="bg-cyan-500/10">
+                data={filteredServices}
 
-                            <tr>
+                renderRow={(service) => (
 
-                                <th className="px-6 py-5 text-left text-sm font-bold uppercase text-cyan-300">
-                                    Title
-                                </th>
+                    <tr
+                        key={service.id}
+                        className="
+                            border-b
+                            border-slate-100
+                            transition
+                            hover:bg-slate-50
+                        "
+                    >
 
-                                <th className="px-6 py-5 text-left text-sm font-bold uppercase text-cyan-300">
-                                    Category
-                                </th>
+                        {/* Service */}
 
-                                <th className="px-6 py-5 text-left text-sm font-bold uppercase text-cyan-300">
-                                    Featured
-                                </th>
+                        <td className="px-6 py-5">
 
-                                <th className="px-6 py-5 text-left text-sm font-bold uppercase text-cyan-300">
-                                    Created
-                                </th>
+                            <div className="font-bold text-slate-800">
 
-                                <th className="px-6 py-5 text-center text-sm font-bold uppercase text-cyan-300">
-                                    Actions
-                                </th>
+                                {service.title}
 
-                            </tr>
+                            </div>
 
-                        </thead>
+                            <div className="mt-2 max-w-xl text-sm text-slate-500">
 
-                        <tbody>
+                                {service.description}
 
-                            {filteredServices.map((service) => (
+                            </div>
 
-                                <tr
-                                    key={service.id}
-                                    className="border-b border-cyan-500/10 transition hover:bg-cyan-500/10"
+                        </td>
+
+                        {/* Category */}
+
+                        <td className="px-6 py-5 whitespace-nowrap">
+
+                            <span
+                                className="
+                                    rounded-full
+                                    bg-cyan-100
+                                    px-3
+                                    py-1
+                                    text-sm
+                                    font-semibold
+                                    text-cyan-700
+                                "
+                            >
+
+                                {service.category}
+
+                            </span>
+
+                        </td>
+
+                        {/* Featured */}
+
+                        <td className="px-6 py-5 whitespace-nowrap">
+
+                            <button
+
+                                onClick={() =>
+                                    toggleFeatured(service.id)
+                                }
+
+                                className="transition"
+
+                            >
+
+                                <StatusBadge
+
+                                    status={
+                                        service.featured
+                                            ? "Featured"
+                                            : "Normal"
+                                    }
+
+                                />
+
+                            </button>
+
+                        </td>
+
+                        {/* Created */}
+
+                        <td className="px-6 py-5 whitespace-nowrap text-slate-500">
+
+                            {new Date(
+                                service.createdAt
+                            ).toLocaleDateString()}
+
+                        </td>
+
+                        {/* Actions */}
+
+                        <td className="px-6 py-5">
+
+                            <div className="flex justify-center gap-3">
+
+                                <AdminActionButton
+
+                                    variant="outline"
+
+                                    icon={<Pencil size={16} />}
+
+                                    onClick={() => {
+
+                                        setSelectedService(service);
+
+                                        setShowModal(true);
+
+                                    }}
+
                                 >
 
-                                    <td className="px-6 py-5">
+                                    Edit
 
-                                        <div className="font-bold">
+                                </AdminActionButton>
 
-                                            {service.title}
+                                <AdminActionButton
 
-                                        </div>
+                                    variant="danger"
 
-                                        <div className="mt-1 max-w-md text-sm text-slate-400">
+                                    icon={<Trash2 size={16} />}
 
-                                            {service.description}
+                                    onClick={() => {
 
-                                        </div>
+                                        setDeleteId(service.id);
 
-                                    </td>
+                                        setShowDelete(true);
 
-                                    <td className="px-6 py-5 whitespace-nowrap">
+                                    }}
 
-                                        <span className="rounded-full border border-cyan-500/20 bg-cyan-500/10 px-3 py-1 text-sm">
+                                >
 
-                                            {service.category}
+                                    Delete
 
-                                        </span>
+                                </AdminActionButton>
 
-                                    </td>
+                            </div>
 
-                                    <td className="px-6 py-5 whitespace-nowrap">
+                        </td>
 
-                                        <button
-                                            onClick={() => toggleFeatured(service.id)}
-                                            className={`rounded-full px-4 py-2 text-sm font-bold transition ${service.featured
-                                                ? "bg-green-600 text-white hover:bg-green-700"
-                                                : "bg-slate-700 text-slate-300 hover:bg-slate-600"
-                                                }`}
-                                        >
+                    </tr>
 
-                                            {service.featured ? "ON" : "OFF"}
+                )}
 
-                                        </button>
+            />
 
-                                    </td>
+            {filteredServices.length === 0 && (
 
-                                    <td className="px-6 py-5 whitespace-nowrap text-slate-400">
+                <AdminEmptyState
 
-                                        {new Date(
-                                            service.createdAt
-                                        ).toLocaleDateString()}
+                    icon={<LayoutGrid size={40} />}
 
-                                    </td>
+                    title="No Services Found"
 
-                                    <td className="px-6 py-5">
+                    description="There are no services matching your search."
 
-                                        <div className="flex justify-center gap-3">
+                    action={
 
-                                            <button
+                        <AdminActionButton
 
-                                                onClick={() => {
+                            icon={<Plus size={18} />}
 
-                                                    setSelectedService(service);
+                            onClick={() => {
 
-                                                    setShowModal(true);
+                                setSelectedService(null);
 
-                                                }}
+                                setShowModal(true);
 
-                                                className="rounded-xl bg-cyan-600 p-2 transition hover:bg-cyan-700"
+                            }}
 
-                                                title="Edit Service"
+                        >
 
-                                            >
+                            Add Service
 
-                                                <Pencil size={18} />
+                        </AdminActionButton>
 
-                                            </button>
+                    }
 
-                                            <button
+                />
 
-                                                onClick={() => {
+            )}
 
-                                                    setDeleteId(service.id);
-
-                                                    setShowDelete(true);
-
-                                                }}
-
-                                                className="rounded-xl bg-red-600 p-2 transition hover:bg-red-700"
-
-                                                title="Delete Service"
-
-                                            >
-
-                                                <Trash2 size={18} />
-
-                                            </button>
-
-                                        </div>
-
-                                    </td>
-
-                                </tr>
-
-                            ))}
-
-                            {filteredServices.length === 0 && (
-
-                                <tr>
-
-                                    <td
-                                        colSpan={5}
-                                        className="py-20 text-center"
-                                    >
-
-                                        <LayoutGrid
-                                            size={60}
-                                            className="mx-auto mb-4 text-slate-600"
-                                        />
-
-                                        <h2 className="text-2xl font-bold text-slate-300">
-
-                                            No Services Found
-
-                                        </h2>
-
-                                        <p className="mt-2 text-slate-500">
-
-                                            Try changing your search or category filter.
-
-                                        </p>
-
-                                    </td>
-
-                                </tr>
-
-                            )}
-
-                        </tbody>
-
-                    </table>
-
-                </div>
-
-            </div>
             <ServiceModal
+
                 open={showModal}
+
                 service={selectedService}
+
                 onClose={() => {
+
                     setShowModal(false);
+
                     setSelectedService(null);
+
                 }}
+
                 onSuccess={async () => {
+
                     await loadServices();
+
                     setShowModal(false);
+
                     setSelectedService(null);
+
                 }}
+
             />
 
             <DeleteModal
-                open={showDelete}
-                title="Delete Service"
-                message="This action cannot be undone. Do you want to permanently delete this service?"
-                onCancel={() => {
-                    setShowDelete(false);
-                    setDeleteId(null);
-                }}
-                onConfirm={deleteService}
-            />
 
-        </main>
+                open={showDelete}
+
+                title="Delete Service"
+
+                message="This action cannot be undone. Do you want to permanently delete this service?"
+
+                onCancel={() => {
+
+                    setShowDelete(false);
+
+                    setDeleteId(null);
+
+                }}
+
+                onConfirm={deleteService}
+
+            />
+        </div>
+
     );
+
 }
