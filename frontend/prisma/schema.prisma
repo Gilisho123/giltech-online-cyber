@@ -41,11 +41,18 @@ model Portfolio {
 }
 
 model Admin {
-  id        Int      @id @default(autoincrement())
-  name      String
-  email     String   @unique
-  password  String
-  createdAt DateTime @default(now())
+  id          Int      @id @default(autoincrement())
+
+  name        String
+  email       String   @unique
+  password    String
+
+  role        String   @default("Administrator")
+  active      Boolean  @default(true)
+  lastLogin   DateTime?
+
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
 }
 
 model SiteSettings {
