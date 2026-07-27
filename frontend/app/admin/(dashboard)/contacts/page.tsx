@@ -1,7 +1,23 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import { Eye, Search, X, Mail, Phone, Calendar } from "lucide-react";
+
+import {
+    Eye,
+    Mail,
+    Phone,
+    Calendar,
+    X,
+} from "lucide-react";
+
+import AdminPageHeader from "@/components/admin/AdminPageHeader";
+import AdminStatCard from "@/components/admin/AdminStatCard";
+import AdminSearch from "@/components/admin/AdminSearch";
+import AdminTable from "@/components/admin/AdminTable";
+import StatusBadge from "@/components/admin/StatusBadge";
+import AdminLoading from "@/components/admin/AdminLoading";
+import AdminEmptyState from "@/components/admin/AdminEmptyState";
+import AdminActionButton from "@/components/admin/AdminActionButton";
 
 interface Contact {
     id: number;
@@ -15,74 +31,113 @@ interface Contact {
 }
 
 export default function ContactsPage() {
+
     const [contacts, setContacts] = useState<Contact[]>([]);
     const [loading, setLoading] = useState(true);
+
     const [search, setSearch] = useState("");
-    const [selectedContact, setSelectedContact] = useState<Contact | null>(null);
-    const [showModal, setShowModal] = useState(false);
+
+    const [selectedContact, setSelectedContact] =
+        useState<Contact | null>(null);
+
+    const [showModal, setShowModal] =
+        useState(false);
 
     useEffect(() => {
+
         async function loadContacts() {
+
             try {
+
                 const res = await fetch("/api/contact");
+
                 const data = await res.json();
 
-                console.log("API Response:", data);
-
                 if (Array.isArray(data)) {
+
                     setContacts(data);
+
                 } else {
-                    console.error("API Error:", data);
+
                     setContacts([]);
+
                 }
+
             } catch (error) {
+
                 console.error(error);
+
             } finally {
+
                 setLoading(false);
+
             }
+
         }
 
         loadContacts();
+
     }, []);
+
     async function markAsRead(id: number) {
+
         try {
+
             const res = await fetch("/api/contact", {
+
                 method: "PATCH",
+
                 headers: {
                     "Content-Type": "application/json",
                 },
+
                 body: JSON.stringify({
+
                     id,
+
                     status: "Read",
+
                 }),
+
             });
 
-            if (!res.ok) {
-                throw new Error("Update failed");
-            }
+            if (!res.ok) throw new Error();
 
             setContacts((previous) =>
                 previous.map((contact) =>
                     contact.id === id
-                        ? { ...contact, status: "Read" }
+                        ? {
+                            ...contact,
+                            status: "Read",
+                        }
                         : contact
                 )
             );
 
             if (selectedContact?.id === id) {
+
                 setSelectedContact({
+
                     ...selectedContact,
+
                     status: "Read",
+
                 });
+
             }
+
         } catch (error) {
+
             console.error(error);
+
         }
+
     }
+
     async function deleteContact(id: number) {
 
         const confirmed = window.confirm(
-            "Are you sure you want to permanently delete this contact?"
+            "Delete this contact permanently?"
         );
 
         if (!confirmed) return;
@@ -90,18 +145,22 @@ export default function ContactsPage() {
         try {
 
             const res = await fetch("/api/contact", {
+
                 method: "DELETE",
+
                 headers: {
                     "Content-Type": "application/json",
                 },
+
                 body: JSON.stringify({
+
                     id,
+
                 }),
+
             });
 
-            if (!res.ok) {
-                throw new Error("Delete failed");
-            }
+            if (!res.ok) throw new Error();
 
             setContacts((previous) =>
                 previous.filter((contact) => contact.id !== id)
@@ -116,21 +175,35 @@ export default function ContactsPage() {
             alert("Failed to delete contact.");
 
         }
+
     }
 
     const filteredContacts = useMemo(() => {
-        if (!Array.isArray(contacts)) return [];
 
         return contacts.filter((contact) => {
+
             const keyword = search.toLowerCase();
 
             return (
-                contact.name.toLowerCase().includes(keyword) ||
-                contact.email.toLowerCase().includes(keyword) ||
-                contact.phone.toLowerCase().includes(keyword) ||
+
+                contact.name.toLowerCase().includes(keyword)
+
+                ||
+
+                contact.email.toLowerCase().includes(keyword)
+
+                ||
+
+                contact.phone.toLowerCase().includes(keyword)
+
+                ||
+
                 contact.subject.toLowerCase().includes(keyword)
+
             );
+
         });
+
     }, [contacts, search]);
 
     const totalContacts = contacts.length;
@@ -139,343 +212,409 @@ export default function ContactsPage() {
         (contact) => contact.status === "New"
     ).length;
 
-    const uniqueClients = new Set(
-        contacts.map((contact) => contact.email)
-    ).size;
-
-    const todaysContacts = contacts.filter((contact) => {
-        return (
+    const todaysContacts = contacts.filter(
+        (contact) =>
             new Date(contact.createdAt).toDateString() ===
             new Date().toDateString()
-        );
-    }).length;
+    ).length;
+
+    const uniqueClients =
+        new Set(
+            contacts.map((contact) => contact.email)
+        ).size;
 
     if (loading) {
+
         return (
-            <div className="flex h-[70vh] items-center justify-center text-xl font-bold text-cyan-400">
-                Loading contacts...
-            </div>
+
+            <AdminLoading
+                cards={4}
+                rows={8}
+            />
+
         );
+
     }
 
+    const columns = [
+
+        {
+            key: "name",
+            label: "Name",
+        },
+
+        {
+            key: "email",
+            label: "Email",
+        },
+
+        {
+            key: "phone",
+            label: "Phone",
+        },
+
+        {
+            key: "subject",
+            label: "Subject",
+        },
+
+        {
+            key: "status",
+            label: "Status",
+        },
+
+        {
+            key: "date",
+            label: "Date",
+        },
+
+        {
+            key: "actions",
+            label: "Actions",
+        },
+
+    ];
+
     return (
-        <main className="min-h-screen bg-[#081225] text-white">
 
-            {/* Header */}
+        <div className="space-y-8">
 
-            <div className="mb-10">
+            <AdminPageHeader
 
-                <span className="rounded-full border border-cyan-500 px-4 py-2 text-sm font-semibold text-cyan-400">
-                    CONTACT MANAGEMENT
-                </span>
+                badge="CONTACT MANAGEMENT"
 
-                <h1 className="mt-6 text-4xl font-black">
-                    Customer Contact Messages
-                </h1>
+                title="Customer Contact Messages"
 
-                <p className="mt-3 text-slate-400">
-                    Manage all enquiries received through Giltech Online Cyber.
-                </p>
+                description="Manage all enquiries received through Giltech Online Cyber."
 
-            </div>
+            />
 
-            {/* Statistics */}
+            <div className="grid gap-6 sm:grid-cols-2 xl:grid-cols-4">
 
-            <div className="mb-10 grid gap-6 md:grid-cols-2 xl:grid-cols-4">
+                <AdminStatCard
 
-                <div className="rounded-3xl border border-cyan-500/20 bg-white/5 p-6">
-                    <p className="text-slate-400">
-                        Total Contacts
-                    </p>
+                    title="Total Contacts"
 
-                    <h2 className="mt-3 text-5xl font-black text-cyan-400">
-                        {totalContacts}
-                    </h2>
-                </div>
+                    value={totalContacts}
 
-                <div className="rounded-3xl border border-cyan-500/20 bg-white/5 p-6">
-                    <p className="text-slate-400">
-                        New Messages
-                    </p>
+                    icon={<Mail size={28} />}
 
-                    <h2 className="mt-3 text-5xl font-black text-cyan-400">
-                        {newContacts}
-                    </h2>
-                </div>
-
-                <div className="rounded-3xl border border-cyan-500/20 bg-white/5 p-6">
-                    <p className="text-slate-400">
-                        Today's Messages
-                    </p>
-
-                    <h2 className="mt-3 text-5xl font-black text-cyan-400">
-                        {todaysContacts}
-                    </h2>
-                </div>
-
-                <div className="rounded-3xl border border-cyan-500/20 bg-white/5 p-6">
-                    <p className="text-slate-400">
-                        Unique Clients
-                    </p>
-
-                    <h2 className="mt-3 text-5xl font-black text-cyan-400">
-                        {uniqueClients}
-                    </h2>
-                </div>
-
-            </div>
-
-            {/* Search */}
-
-            <div className="relative mb-8">
-
-                <Search
-                    size={20}
-                    className="absolute left-5 top-1/2 -translate-y-1/2 text-cyan-400"
                 />
 
-                <input
-                    type="text"
-                    placeholder="Search by name, email, phone or subject..."
-                    value={search}
-                    onChange={(e) => setSearch(e.target.value)}
-                    className="w-full rounded-2xl border border-cyan-500/20 bg-[#101c33] py-4 pl-14 pr-5 text-white outline-none transition focus:border-cyan-400"
+                <AdminStatCard
+
+                    title="New Messages"
+
+                    value={newContacts}
+
+                    icon={<Mail size={28} />}
+
+                    color="bg-cyan-100 text-cyan-600"
+
+                />
+
+                <AdminStatCard
+
+                    title="Today's Messages"
+
+                    value={todaysContacts}
+
+                    icon={<Calendar size={28} />}
+
+                    color="bg-green-100 text-green-600"
+
+                />
+
+                <AdminStatCard
+
+                    title="Unique Clients"
+
+                    value={uniqueClients}
+
+                    icon={<Phone size={28} />}
+
+                    color="bg-purple-100 text-purple-600"
+
                 />
 
             </div>
 
-            {/* Table */}
+            <AdminSearch
 
-            <div className="overflow-hidden rounded-3xl border border-cyan-500/20 bg-white/5 backdrop-blur-xl">
+                search={search}
 
-                <div className="overflow-x-auto">
+                onSearch={setSearch}
 
-                    <table className="min-w-full">
+                placeholder="Search by name, email, phone or subject..."
 
-                        <thead className="border-b border-cyan-500/20 bg-[#101c33]">
+            />
+            <AdminTable
 
-                            <tr>
+                columns={columns}
 
-                                <th className="px-6 py-5 text-left font-semibold text-cyan-400">
-                                    Name
-                                </th>
+                data={filteredContacts}
 
-                                <th className="px-6 py-5 text-left font-semibold text-cyan-400">
-                                    Email
-                                </th>
+                renderRow={(contact) => (
 
-                                <th className="px-6 py-5 text-left font-semibold text-cyan-400">
-                                    Phone
-                                </th>
+                    <tr
+                        key={contact.id}
+                        className="border-b border-slate-100 hover:bg-slate-50 transition"
+                    >
 
-                                <th className="px-6 py-5 text-left font-semibold text-cyan-400">
-                                    Subject
-                                </th>
+                        <td className="px-6 py-5 font-semibold text-slate-800 whitespace-nowrap">
+                            {contact.name}
+                        </td>
 
-                                <th className="px-6 py-5 text-left font-semibold text-cyan-400">
-                                    Status
-                                </th>
+                        <td className="px-6 py-5 text-slate-600 whitespace-nowrap">
+                            {contact.email}
+                        </td>
 
-                                <th className="px-6 py-5 text-left font-semibold text-cyan-400">
-                                    Date
-                                </th>
+                        <td className="px-6 py-5 text-slate-600 whitespace-nowrap">
+                            {contact.phone}
+                        </td>
 
-                                <th className="px-6 py-5 text-center font-semibold text-cyan-400">
-                                    Actions
-                                </th>
+                        <td className="px-6 py-5 text-slate-700">
+                            {contact.subject}
+                        </td>
 
-                            </tr>
+                        <td className="px-6 py-5">
 
-                        </thead>
+                            <StatusBadge
+                                status={contact.status}
+                            />
 
-                        <tbody>
+                        </td>
 
-                            {filteredContacts.map((contact) => (
+                        <td className="px-6 py-5 text-slate-500 whitespace-nowrap">
 
-                                <tr
-                                    key={contact.id}
-                                    className="border-b border-cyan-500/10 transition hover:bg-cyan-500/10"
+                            {new Date(
+                                contact.createdAt
+                            ).toLocaleDateString()}
+
+                        </td>
+
+                        <td className="px-6 py-5">
+
+                            <div className="flex justify-center">
+
+                                <AdminActionButton
+
+                                    variant="outline"
+
+                                    icon={<Eye size={16} />}
+
+                                    onClick={() => {
+
+                                        setSelectedContact(contact);
+
+                                        setShowModal(true);
+
+                                    }}
+
                                 >
 
-                                    <td className="px-6 py-5 font-semibold whitespace-nowrap">
-                                        {contact.name}
-                                    </td>
+                                    View
 
-                                    <td className="px-6 py-5 text-slate-300 whitespace-nowrap">
-                                        {contact.email}
-                                    </td>
+                                </AdminActionButton>
 
-                                    <td className="px-6 py-5 text-slate-300 whitespace-nowrap">
-                                        {contact.phone}
-                                    </td>
+                            </div>
 
-                                    <td className="px-6 py-5">
-                                        {contact.subject}
-                                    </td>
+                        </td>
 
-                                    <td className="px-6 py-5">
+                    </tr>
 
-                                        <span
-                                            className={`rounded-full px-3 py-1 text-sm font-semibold border ${contact.status === "New"
-                                                ? "border-cyan-500/30 bg-cyan-500/20 text-cyan-300"
-                                                : contact.status === "Read"
-                                                    ? "border-green-500/30 bg-green-500/20 text-green-300"
-                                                    : "border-yellow-500/30 bg-yellow-500/20 text-yellow-300"
-                                                }`}
-                                        >
-                                            {contact.status}
-                                        </span>
+                )}
 
-                                    </td>
+            />
 
-                                    <td className="px-6 py-5 text-slate-400 whitespace-nowrap">
-                                        {new Date(
-                                            contact.createdAt
-                                        ).toLocaleDateString()}
-                                    </td>
+            {filteredContacts.length === 0 && (
 
-                                    <td className="px-6 py-5">
+                <AdminEmptyState
 
-                                        <div className="flex justify-center">
+                    icon={<Mail size={38} />}
 
-                                            <button
-                                                onClick={() => {
-                                                    setSelectedContact(contact);
-                                                    setShowModal(true);
-                                                }}
-                                                className="rounded-xl border border-cyan-500/20 bg-cyan-500/10 p-2 text-cyan-400 transition hover:bg-cyan-500 hover:text-white"
-                                                title="View Message"
-                                            >
-                                                <Eye size={18} />
-                                            </button>
+                    title="No contact messages found"
 
-                                        </div>
+                    description="Customer enquiries will appear here after someone submits the contact form."
 
-                                    </td>
+                />
 
-                                </tr>
+            )}
 
-                            ))}
-
-                            {filteredContacts.length === 0 && (
-
-                                <tr>
-
-                                    <td
-                                        colSpan={7}
-                                        className="py-16 text-center text-slate-400"
-                                    >
-                                        No contacts found.
-                                    </td>
-
-                                </tr>
-
-                            )}
-
-                        </tbody>
-
-                    </table>
-
-                </div>
-
-            </div>
             {showModal && selectedContact && (
 
-                <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm">
+                <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm">
 
-                    <div className="w-full max-w-2xl rounded-3xl border border-cyan-500/20 bg-[#101c33] p-8 text-white shadow-2xl">
+                    <div className="w-full max-w-3xl rounded-3xl bg-white shadow-2xl">
 
-                        <div className="mb-8 flex items-center justify-between">
+                        <div className="flex items-center justify-between border-b border-slate-200 px-8 py-6">
 
-                            <h2 className="text-3xl font-black text-cyan-400">
-                                Contact Details
-                            </h2>
+                            <div>
+
+                                <h2 className="text-3xl font-black text-slate-800">
+                                    Contact Details
+                                </h2>
+
+                                <p className="mt-2 text-slate-500">
+                                    Customer enquiry information
+                                </p>
+
+                            </div>
 
                             <button
-                                onClick={() => setShowModal(false)}
-                                className="rounded-xl p-2 hover:bg-white/10"
+
+                                onClick={() =>
+                                    setShowModal(false)
+                                }
+
+                                className="rounded-xl p-2 transition hover:bg-slate-100"
+
                             >
+
                                 <X />
+
                             </button>
 
                         </div>
 
-                        <div className="space-y-6">
+                        <div className="space-y-6 p-8">
 
-                            <div className="flex items-center gap-3">
-                                <Mail className="text-cyan-400" />
-                                <div>
-                                    <p className="text-sm text-slate-400">Email</p>
-                                    <p>{selectedContact.email}</p>
-                                </div>
-                            </div>
+                            <div className="grid gap-6 md:grid-cols-3">
 
-                            <div className="flex items-center gap-3">
-                                <Phone className="text-cyan-400" />
-                                <div>
-                                    <p className="text-sm text-slate-400">Phone</p>
-                                    <p>{selectedContact.phone}</p>
-                                </div>
-                            </div>
+                                <div className="rounded-2xl border border-slate-200 p-5">
 
-                            <div className="flex items-center gap-3">
-                                <Calendar className="text-cyan-400" />
-                                <div>
-                                    <p className="text-sm text-slate-400">Received</p>
-                                    <p>
-                                        {new Date(selectedContact.createdAt).toLocaleString()}
+                                    <Mail
+                                        className="mb-3 text-cyan-600"
+                                    />
+
+                                    <p className="text-sm text-slate-500">
+                                        Email
                                     </p>
+
+                                    <h3 className="mt-2 font-semibold text-slate-800">
+                                        {selectedContact.email}
+                                    </h3>
+
                                 </div>
+
+                                <div className="rounded-2xl border border-slate-200 p-5">
+
+                                    <Phone
+                                        className="mb-3 text-green-600"
+                                    />
+
+                                    <p className="text-sm text-slate-500">
+                                        Phone
+                                    </p>
+
+                                    <h3 className="mt-2 font-semibold text-slate-800">
+                                        {selectedContact.phone}
+                                    </h3>
+
+                                </div>
+
+                                <div className="rounded-2xl border border-slate-200 p-5">
+
+                                    <Calendar
+                                        className="mb-3 text-purple-600"
+                                    />
+
+                                    <p className="text-sm text-slate-500">
+                                        Date
+                                    </p>
+
+                                    <h3 className="mt-2 font-semibold text-slate-800">
+                                        {new Date(
+                                            selectedContact.createdAt
+                                        ).toLocaleString()}
+                                    </h3>
+
+                                </div>
+
                             </div>
 
                             <div>
-                                <p className="mb-2 text-sm text-slate-400">
-                                    Full Name
-                                </p>
 
-                                <div className="rounded-xl bg-[#081225] p-4">
+                                <label className="mb-2 block font-semibold text-slate-700">
+                                    Full Name
+                                </label>
+
+                                <div className="rounded-xl border border-slate-200 bg-slate-50 p-4">
                                     {selectedContact.name}
                                 </div>
+
                             </div>
 
                             <div>
-                                <p className="mb-2 text-sm text-slate-400">
-                                    Subject
-                                </p>
 
-                                <div className="rounded-xl bg-[#081225] p-4">
+                                <label className="mb-2 block font-semibold text-slate-700">
+                                    Subject
+                                </label>
+
+                                <div className="rounded-xl border border-slate-200 bg-slate-50 p-4">
                                     {selectedContact.subject}
                                 </div>
+
                             </div>
 
                             <div>
-                                <p className="mb-2 text-sm text-slate-400">
-                                    Message
-                                </p>
 
-                                <div className="min-h-40 rounded-xl bg-[#081225] p-4 whitespace-pre-wrap">
+                                <label className="mb-2 block font-semibold text-slate-700">
+                                    Message
+                                </label>
+
+                                <div className="min-h-40 whitespace-pre-wrap rounded-xl border border-slate-200 bg-slate-50 p-5">
                                     {selectedContact.message}
                                 </div>
-                            </div>
-                            <div className="mt-8 flex justify-end gap-4">
 
-                                <button
-                                    onClick={() => deleteContact(selectedContact.id)}
-                                    className="rounded-xl border border-red-500 bg-red-500/20 px-6 py-3 font-bold text-red-300 transition hover:bg-red-600 hover:text-white"
-                                >
-                                    Delete
-                                </button>
+                            </div>
+                            <div className="flex flex-wrap justify-end gap-4 border-t border-slate-200 pt-6">
 
                                 {selectedContact.status === "New" && (
 
-                                    <button
-                                        onClick={() => markAsRead(selectedContact.id)}
-                                        className="rounded-xl bg-cyan-500 px-6 py-3 font-bold text-black transition hover:bg-cyan-400"
+                                    <AdminActionButton
+
+                                        variant="success"
+
+                                        onClick={() =>
+                                            markAsRead(selectedContact.id)
+                                        }
+
                                     >
+
                                         Mark as Read
-                                    </button>
+
+                                    </AdminActionButton>
 
                                 )}
+
+                                <AdminActionButton
+
+                                    variant="danger"
+
+                                    onClick={() =>
+                                        deleteContact(selectedContact.id)
+                                    }
+
+                                >
+
+                                    Delete
+
+                                </AdminActionButton>
+
+                                <AdminActionButton
+
+                                    variant="outline"
+
+                                    onClick={() =>
+                                        setShowModal(false)
+                                    }
+
+                                >
+
+                                    Close
+
+                                </AdminActionButton>
 
                             </div>
 
@@ -487,6 +626,8 @@ export default function ContactsPage() {
 
             )}
 
-        </main>
+        </div>
+
     );
+
 }
