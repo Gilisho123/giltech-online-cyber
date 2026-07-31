@@ -24,10 +24,9 @@ model Service {
   title       String
   category    String
   description String
-  featured    Boolean  @default(false)
-
   createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  featured    Boolean  @default(false)
+  updatedAt   DateTime @default(now()) @updatedAt @db.Timestamptz(6)
 }
 
 model Portfolio {
@@ -41,50 +40,14 @@ model Portfolio {
 }
 
 model Admin {
-  id          Int      @id @default(autoincrement())
-
-  username    String   @unique
-  name        String
-  email       String   @unique
-  password    String
-
-  role        String   @default("Administrator")
-  active      Boolean  @default(true)
-  lastLogin   DateTime?
-
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-}
-
-model SiteSettings {
-  id             Int      @id @default(1)
-  companyName    String
-  email          String
-  phone          String
-  whatsapp       String
-  address        String
-
-  googleMaps     String
-
-  facebook       String
-  twitter        String
-  instagram      String
-  linkedin       String
-  tiktok         String
-  youtube        String
-
-  logo           String?
-  favicon        String?
-
-  heroTitle      String
-  heroSubtitle   String
-
-  footerText     String
-  copyright      String
-
-  seoTitle       String
-  seoDescription String
-
-  createdAt      DateTime @default(now())
-  updatedAt      DateTime @updatedAt
+  id        Int       @id @default(autoincrement())
+  name      String
+  email     String    @unique
+  password  String
+  createdAt DateTime  @default(now())
+  username  String?   @unique
+  role      String?   @default("Administrator")
+  active    Boolean?  @default(true)
+  lastLogin DateTime? @db.Timestamp(6)
+  updatedAt DateTime? @default(now()) @updatedAt @db.Timestamp(6)
 }
