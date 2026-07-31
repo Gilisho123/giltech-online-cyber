@@ -60,10 +60,11 @@ const handler = NextAuth({
 
                 }
 
-                // Temporary login check
-
                 const validPassword =
-                    credentials.password === admin.password;
+                    await bcrypt.compare(
+                        credentials.password,
+                        admin.password
+                    );
 
                 if (!validPassword) {
                     return null;
