@@ -100,6 +100,10 @@ export default function UsersPage() {
 
             const matchesSearch =
 
+                user.username.toLowerCase().includes(keyword)
+
+                ||
+
                 user.name.toLowerCase().includes(keyword)
 
                 ||
@@ -367,6 +371,12 @@ export default function UsersPage() {
 
                                     </h3>
 
+                                    <p className="text-sm text-cyan-600">
+
+                                        @{user.username}
+
+                                    </p>
+
                                     <p className="text-sm text-slate-500">
 
                                         {user.email}
@@ -423,9 +433,7 @@ export default function UsersPage() {
                                 <div className="flex flex-wrap gap-2">
 
                                     <AdminActionButton
-
                                         variant="outline"
-
                                         onClick={() => {
 
                                             setSelectedUser(user);
@@ -433,17 +441,12 @@ export default function UsersPage() {
                                             setShowUserModal(true);
 
                                         }}
-
                                     >
-
                                         Edit
-
                                     </AdminActionButton>
 
                                     <AdminActionButton
-
                                         variant="outline"
-
                                         onClick={() => {
 
                                             setSelectedUser(user);
@@ -451,11 +454,40 @@ export default function UsersPage() {
                                             setShowPasswordModal(true);
 
                                         }}
-
                                     >
-
                                         Password
+                                    </AdminActionButton>
 
+                                    <AdminActionButton
+                                        variant="danger"
+                                        onClick={async () => {
+
+                                            if (!confirm(`Delete ${user.name}?`)) {
+                                                return;
+                                            }
+
+                                            const res = await fetch(
+                                                `/api/admin/users/${user.id}`,
+                                                {
+                                                    method: "DELETE",
+                                                }
+                                            );
+
+                                            if (res.ok) {
+
+                                                loadUsers();
+
+                                            } else {
+
+                                                const error = await res.json();
+
+                                                alert(error.message);
+
+                                            }
+
+                                        }}
+                                    >
+                                        Delete
                                     </AdminActionButton>
 
                                 </div>
@@ -511,6 +543,8 @@ export default function UsersPage() {
                 }}
 
                 onSuccess={() => {
+
+                    loadUsers();
 
                     setShowPasswordModal(false);
 

@@ -86,14 +86,17 @@ export default function PasswordModal({
             );
 
             if (!res.ok) {
+                const error = await res.json();
 
-                throw new Error();
-
+                throw new Error(
+                    error.message || "Failed to update password."
+                );
             }
 
             alert("Password updated successfully.");
 
             onSuccess();
+            onClose();
 
         }
 
@@ -101,7 +104,17 @@ export default function PasswordModal({
 
             console.error(error);
 
-            alert("Failed to update password.");
+            if (error instanceof Error) {
+
+                alert(error.message);
+
+            }
+
+            else {
+
+                alert("Failed to update password.");
+
+            }
 
         }
 
@@ -149,6 +162,8 @@ export default function PasswordModal({
 
                             type="password"
 
+                            placeholder="Enter new password"
+
                             value={password}
 
                             onChange={(e) =>
@@ -173,6 +188,8 @@ export default function PasswordModal({
 
                             type="password"
 
+                            placeholder="Confirm new password"
+
                             value={confirmPassword}
 
                             onChange={(e) =>
@@ -193,7 +210,9 @@ export default function PasswordModal({
 
                         onClick={onClose}
 
-                        className="rounded-xl border border-slate-300 px-6 py-3 font-semibold hover:bg-slate-100"
+                        disabled={saving}
+
+                        className="rounded-xl border border-slate-300 px-6 py-3 font-semibold hover:bg-slate-100 disabled:cursor-not-allowed disabled:opacity-50"
 
                     >
 

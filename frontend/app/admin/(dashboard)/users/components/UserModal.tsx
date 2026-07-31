@@ -103,6 +103,16 @@ export default function UserModal({
 
     async function saveUser() {
 
+        if (
+            !username.trim() ||
+            !name.trim() ||
+            !email.trim() ||
+            (!user && !password.trim())
+        ) {
+            alert("Please fill in all required fields.");
+            return;
+        }
+
         setSaving(true);
 
         try {
@@ -150,21 +160,25 @@ export default function UserModal({
             );
 
             if (!res.ok) {
-
-                throw new Error();
-
+                const error = await res.json();
+                throw new Error(
+                    error.message || "Failed to save administrator."
+                );
             }
 
             onSuccess();
+            onClose();
 
         }
 
         catch (error) {
-
             console.error(error);
 
-            alert("Failed to save administrator.");
-
+            if (error instanceof Error) {
+                alert(error.message);
+            } else {
+                alert("Failed to save administrator.");
+            }
         }
 
         finally {
