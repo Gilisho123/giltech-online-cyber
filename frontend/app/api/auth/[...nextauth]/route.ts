@@ -13,8 +13,8 @@ const handler = NextAuth({
 
             credentials: {
 
-                email: {
-                    label: "Email",
+                username: {
+                    label: "Username",
                     type: "text",
                 },
 
@@ -28,25 +28,33 @@ const handler = NextAuth({
             async authorize(credentials) {
 
                 if (
-                    !credentials?.email ||
+                    !credentials?.username ||
                     !credentials?.password
                 ) {
+
                     return null;
+
                 }
 
                 const admin =
-                    await prisma.admin.findFirst({
+                    await prisma.admin.findUnique({
 
                         where: {
 
-                            email:
-                                credentials.email,
+                            username:
+                                credentials.username,
 
                         },
 
                     });
 
                 if (!admin) {
+
+                    return null;
+
+                }
+
+                if (!admin.active) {
 
                     return null;
 
@@ -91,7 +99,7 @@ const handler = NextAuth({
 
                     email: admin.email,
 
-                    role: "admin",
+                    role: admin.role,
 
                 };
 
