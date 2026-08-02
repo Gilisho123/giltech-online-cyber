@@ -1,3 +1,4 @@
+export const dynamic = "force-dynamic";
 import Card from "@/components/ui/Card";
 import Button from "@/components/ui/Button";
 import { ArrowRight, ExternalLink, GitBranch } from "lucide-react";
