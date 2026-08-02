@@ -1,6 +1,11 @@
 import { NextRequest, NextResponse } from "next/server";
-import { writeFile } from "fs/promises";
-import path from "path";
+import { v2 as cloudinary } from "cloudinary";
+
+cloudinary.config({
+    cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+    api_key: process.env.CLOUDINARY_API_KEY,
+    api_secret: process.env.CLOUDINARY_API_SECRET,
+});
 
 export async function POST(req: NextRequest) {
     try {
@@ -18,29 +23,16 @@ export async function POST(req: NextRequest) {
         const bytes = await file.arrayBuffer();
         const buffer = Buffer.from(bytes);
 
-        const extension = file.name.split(".").pop();
+        const dataUri = `data:${file.type};base64,${buffer.toString("base64")}`;
 
-        const filename =
-            `${Date.now()}-${Math.random()
-                .toString(36)
-                .substring(2, 10)}.${extension}`;
-
-        const uploadDir = path.join(
-            process.cwd(),
-            "public",
-            "uploads",
-            "portfolio"
-        );
-
-        const filePath = path.join(uploadDir, filename);
-
-        await writeFile(filePath, buffer);
+        const result = await cloudinary.uploader.upload(dataUri, {
+            folder: "giltech/portfolio",
+        });
 
         return NextResponse.json({
             success: true,
-            url: `/uploads/portfolio/${filename}`,
+            url: result.secure_url,
         });
-
     } catch (error) {
         console.error(error);
 
