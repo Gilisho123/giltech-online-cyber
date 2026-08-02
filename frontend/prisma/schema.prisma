@@ -36,31 +36,28 @@ model Portfolio {
   description  String
   image        String
   technologies String
-
-  projectUrl   String?
-  githubUrl    String?
-
-  featured     Boolean  @default(false)
-  active       Boolean  @default(true)
-
   createdAt    DateTime @default(now())
+  projectUrl   String?
+  active       Boolean  @default(true)
+  featured     Boolean  @default(false)
+  githubUrl    String?
 }
 
 model SiteSettings {
-  id          Int      @id @default(1)
-  siteName    String   @default("Giltech Online Cyber")
-  tagline     String?
-  email       String?
-  phone       String?
-  address     String?
-  logo        String?
-  facebook    String?
-  twitter     String?
-  instagram   String?
-  linkedin    String?
-  whatsapp    String?
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  id        Int      @id @default(1)
+  siteName  String   @default("Giltech Online Cyber")
+  tagline   String?
+  email     String?
+  phone     String?
+  address   String?
+  logo      String?
+  facebook  String?
+  twitter   String?
+  instagram String?
+  linkedin  String?
+  whatsapp  String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 model Admin {
