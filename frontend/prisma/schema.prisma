@@ -36,6 +36,13 @@ model Portfolio {
   description  String
   image        String
   technologies String
+
+  projectUrl   String?
+  githubUrl    String?
+
+  featured     Boolean  @default(false)
+  active       Boolean  @default(true)
+
   createdAt    DateTime @default(now())
 }
 
