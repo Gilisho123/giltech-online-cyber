@@ -44,18 +44,34 @@ model Portfolio {
 }
 
 model SiteSettings {
-  id        Int      @id @default(1)
-  siteName  String   @default("Giltech Online Cyber")
-  tagline   String?
-  email     String?
-  phone     String?
-  address   String?
-  logo      String?
-  facebook  String?
-  twitter   String?
+  id Int @id @default(1)
+
+  companyName String
+  tagline String
+
+  heroTitle String
+  heroSubtitle String
+
+  heroButtonText String
+  heroButtonLink String
+
+  heroImage String
+
+  aboutTitle String
+  aboutDescription String
+
+  phone String
+  email String
+  address String
+
+  facebook String?
+  twitter String?
+  linkedin String?
   instagram String?
-  linkedin  String?
-  whatsapp  String?
+  github String?
+
+  footerText String
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }

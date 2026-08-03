@@ -4,14 +4,18 @@ import { Inter } from "next/font/google";
 import "./globals.css";
 
 import { siteConfig } from "@/lib/site";
+import { getSiteSettings } from "@/lib/settings";
 import AppShell from "./AppShell";
+
 
 const inter = Inter({
   subsets: ["latin"],
   display: "swap",
 });
 
+
 export const metadata: Metadata = {
+
   metadataBase: new URL(siteConfig.url),
 
   title: {
@@ -54,16 +58,57 @@ export const metadata: Metadata = {
   },
 };
 
-export default function RootLayout({
+
+
+export default async function RootLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+
+
+  const settings = await getSiteSettings();
+
+
+
+  const appShellSettings = settings
+    ? {
+      companyName: settings.companyName,
+      tagline: settings.tagline,
+
+      phone: settings.phone,
+      email: settings.email,
+      address: settings.address,
+
+      facebook: settings.facebook,
+      twitter: settings.twitter,
+      linkedin: settings.linkedin,
+      instagram: settings.instagram,
+      github: settings.github,
+
+      footerText: settings.footerText,
+    }
+    : null;
+
+
+
   return (
+
     <html lang="en">
+
       <body className={`${inter.className} bg-[#081225] text-white`}>
-        <AppShell>{children}</AppShell>
+
+        <AppShell settings={appShellSettings}>
+
+          {children}
+
+        </AppShell>
+
+
       </body>
+
     </html>
+
   );
+
 }

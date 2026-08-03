@@ -9,19 +9,55 @@ import Partners from "@/components/sections/Partners";
 import FAQ from "@/components/sections/FAQ";
 import CallToAction from "@/components/sections/CallToAction";
 
-export default function HomePage() {
+import { getSiteSettings } from "@/lib/settings";
+
+
+export default async function HomePage() {
+
+  const settings = await getSiteSettings();
+
+  const heroSettings = settings
+    ? {
+      companyName: settings.companyName,
+      tagline: settings.tagline ?? "",
+      heroTitle: settings.heroTitle,
+      heroSubtitle: settings.heroSubtitle,
+      heroButtonText: settings.heroButtonText,
+      heroButtonLink: settings.heroButtonLink,
+      heroImage: settings.heroImage,
+    }
+    : null;
+
+  const callToActionSettings = settings
+    ? {
+      companyName: settings.companyName,
+      tagline: settings.tagline ?? "",
+      phone: settings.phone ?? "",
+      email: settings.email ?? "",
+    }
+    : null;
+
   return (
     <>
-      <Hero />
+      <Hero settings={heroSettings} />
+
       <Stats />
+
       <FeaturedServices />
+
       <WhyChooseUs />
+
       <HowItWorks />
+
       <PortfolioPreview />
+
       <Testimonials />
+
       <Partners />
+
       <FAQ />
-      <CallToAction />
+
+      <CallToAction settings={callToActionSettings} />
     </>
   );
 }
