@@ -63,6 +63,61 @@ model SiteSettings {
   heroCard2Title String @default("Coverage")
   heroCard2Text String @default("Serving Kenya & Beyond")
 
+  // STATS
+
+  stat1Number String @default("170+")
+  stat1Label String @default("Services")
+
+  stat2Number String @default("10+")
+  stat2Label String @default("Years Experience")
+
+  stat3Number String @default("500+")
+  stat3Label String @default("Happy Clients")
+
+  stat4Number String @default("24/7")
+  stat4Label String @default("Support")
+
+  whyTitle String @default("Why Businesses Trust Giltech")
+whyDescription String @default("We combine technology, expertise and customer care.")
+
+whyCard1Title String @default("Trusted Expertise")
+whyCard1Text String @default("Professional experience and reliable solutions.")
+
+whyCard2Title String @default("Fast Turnaround")
+whyCard2Text String @default("Quick service delivery without compromising quality.")
+
+whyCard3Title String @default("Secure & Confidential")
+whyCard3Text String @default("Your information is handled securely.")
+
+whyCard4Title String @default("100+ Digital Services")
+whyCard4Text String @default("Government, business and technology services.")
+
+whyCard5Title String @default("Business Focused")
+whyCard5Text String @default("Helping businesses grow digitally.")
+
+whyCard6Title String @default("Dedicated Support")
+whyCard6Text String @default("Support throughout your service journey.")
+
+processTitle String @default("How It Works")
+processDescription String @default("Getting professional digital services has never been easier.")
+
+step1Title String @default("Choose a Service")
+step1Text String @default("Browse our wide range of professional services and select the one you need.")
+
+step2Title String @default("Submit Your Request")
+step2Text String @default("Fill in the service request form and upload any required documents.")
+
+step3Title String @default("Make Payment")
+step3Text String @default("Pay securely using M-Pesa or any other supported payment method.")
+
+step4Title String @default("Receive Your Service")
+step4Text String @default("Our team processes your request and delivers the completed service promptly.")
+
+ctaTitle String @default("Ready to Transform Your Business?")
+ctaSubtitle String @default("From government services to AI, software development and tax consultancy, we're ready to help you.")
+ctaButtonText String @default("Request Service")
+ctaButtonLink String @default("/contact")
+
   aboutTitle String
   aboutDescription String
 
@@ -93,3 +148,59 @@ model Admin {
   lastLogin DateTime? @db.Timestamp(6)
   updatedAt DateTime? @default(now()) @updatedAt @db.Timestamp(6)
 }
+
+model Testimonial {
+  id         Int      @id @default(autoincrement())
+
+  name       String
+  position   String
+  company    String
+
+  message    String
+
+  rating     Int      @default(5)
+
+  image      String   @default("/avatar.png")
+
+  featured   Boolean  @default(true)
+
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+}
+
+model Partner {
+
+  id         Int      @id @default(autoincrement())
+
+  name       String
+
+  logo       String
+
+  website    String?
+
+  featured   Boolean  @default(true)
+
+  createdAt  DateTime @default(now())
+
+  updatedAt  DateTime @updatedAt
+
+}
+
+model FAQ {
+
+  id         Int      @id @default(autoincrement())
+
+  question   String
+
+  answer     String   @db.Text
+
+  featured   Boolean  @default(true)
+
+  order      Int      @default(0)
+
+  createdAt  DateTime @default(now())
+
+  updatedAt  DateTime @updatedAt
+
+}
+

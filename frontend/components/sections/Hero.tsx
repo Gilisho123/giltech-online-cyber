@@ -225,7 +225,7 @@ export default function Hero({ settings }: HeroProps) {
 
                                 <Image
 
-                                    src={data.heroImage}
+                                    src={data.heroImage || "/images/hero.png"}
 
                                     alt={data.companyName}
 
