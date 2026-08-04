@@ -57,6 +57,12 @@ model SiteSettings {
 
   heroImage String
 
+  heroCard1Title String @default("Experience")
+  heroCard1Text String @default("170+ Professional Services")
+
+  heroCard2Title String @default("Coverage")
+  heroCard2Text String @default("Serving Kenya & Beyond")
+
   aboutTitle String
   aboutDescription String
 
@@ -75,7 +81,6 @@ model SiteSettings {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
-
 model Admin {
   id        Int       @id @default(autoincrement())
   name      String
