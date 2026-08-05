@@ -84,25 +84,6 @@ export default async function HomePage() {
     }
     : null;
 
-  const processSettings = settings
-    ? {
-      processTitle: settings.processTitle,
-      processDescription: settings.processDescription,
-
-      step1Title: settings.step1Title,
-      step1Text: settings.step1Text,
-
-      step2Title: settings.step2Title,
-      step2Text: settings.step2Text,
-
-      step3Title: settings.step3Title,
-      step3Text: settings.step3Text,
-
-      step4Title: settings.step4Title,
-      step4Text: settings.step4Text,
-    }
-    : null;
-
   const portfolioProjects = await prisma.portfolio.findMany({
     where: {
       featured: true,
@@ -141,21 +122,11 @@ export default async function HomePage() {
     },
   });
 
-  const callToActionSettings = settings
-    ? {
-      companyName: settings.companyName,
-      tagline: settings.tagline,
-
-      phone: settings.phone,
-      email: settings.email,
-
-      ctaTitle: settings.ctaTitle,
-      ctaSubtitle: settings.ctaSubtitle,
-
-      ctaButtonText: settings.ctaButtonText,
-      ctaButtonLink: settings.ctaButtonLink,
-    }
-    : null;
+  const callToAction = await prisma.callToAction.findUnique({
+    where: {
+      id: 1,
+    },
+  });
 
   const whyChooseItems = await prisma.whyChoose.findMany({
     where: {
@@ -163,6 +134,15 @@ export default async function HomePage() {
     },
     orderBy: {
       order: "asc",
+    },
+  });
+
+  const processSteps = await prisma.processStep.findMany({
+    where: {
+      active: true,
+    },
+    orderBy: {
+      stepNumber: "asc",
     },
   });
 
@@ -187,7 +167,7 @@ export default async function HomePage() {
       <WhyChooseUs items={whyChooseItems} />
 
 
-      <HowItWorks settings={processSettings} />
+      <HowItWorks steps={processSteps} />
 
 
       <PortfolioPreview projects={portfolioProjects} />
@@ -202,7 +182,7 @@ export default async function HomePage() {
       <FAQ faqs={faqs} />
 
 
-      <CallToAction settings={callToActionSettings} />
+      <CallToAction settings={callToAction} />
 
     </>
 
