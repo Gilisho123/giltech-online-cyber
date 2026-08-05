@@ -1,103 +1,266 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 
+
+
 export async function GET() {
+
     try {
+
+
         let settings = await prisma.siteSettings.findUnique({
+
             where: {
                 id: 1,
             },
+
         });
 
+
+
         if (!settings) {
+
+
             settings = await prisma.siteSettings.create({
+
                 data: {
+
                     id: 1,
-                    companyName: "Giltech Online Cyber",
-                    tagline: "Empowering Businesses Through Digital Innovation",
+
+
+                    companyName:
+                        "Giltech Online Cyber",
+
+
+                    tagline:
+                        "Kenya's Digital Business Hub",
+
+
+
+                    // HERO
 
                     heroTitle:
-                        "Empowering Businesses Through Digital Innovation",
+                        "Digital Solutions For Modern Businesses",
+
 
                     heroSubtitle:
-                        "Professional KRA Services, Software Development, Data Analytics, AI Solutions and Digital Transformation.",
+                        "Government services, tax consultancy, data analytics, AI solutions, software development and digital transformation.",
 
-                    heroButtonText: "Explore Services",
 
-                    heroButtonLink: "/services",
 
-                    heroImage: "",
+                    heroButtonText:
+                        "Request Service",
 
-                    aboutTitle: "About Giltech",
+
+                    heroButtonLink:
+                        "/contact",
+
+
+
+                    heroImage:
+                        "/images/hero.png",
+
+
+
+
+                    // HERO CARDS
+
+                    heroCard1Title:
+                        "Data Analytics",
+
+
+                    heroCard1Text:
+                        "Power BI • Python • Excel • SPSS",
+
+
+
+                    heroCard2Title:
+                        "AI Solutions",
+
+
+                    heroCard2Text:
+                        "Automation • ChatGPT • AI Training",
+
+
+
+
+
+                    // ABOUT
+
+                    aboutTitle:
+                        "About Giltech",
+
+
 
                     aboutDescription:
-                        "Giltech Online Cyber provides professional digital solutions including software development, tax consultancy, data analytics, AI solutions, and business support.",
+                        "Giltech Online Cyber provides professional digital solutions including government services, tax consultancy, software development, data analytics and AI solutions.",
 
-                    phone: "+254 758 220 554",
 
-                    email: "giltechonlinecyber@gmail.com",
 
-                    address: "Nakuru, Kenya",
 
-                    facebook: "",
 
-                    twitter: "",
 
-                    linkedin: "",
+                    // CONTACT
 
-                    instagram: "",
+                    phone:
+                        "+254 758 220 554",
 
-                    github: "",
+
+                    email:
+                        "giltechonlinecyber@gmail.com",
+
+
+                    address:
+                        "Nakuru, Kenya",
+
+
+
+
+
+                    // SOCIAL
+
+                    facebook:
+                        "",
+
+
+                    twitter:
+                        "",
+
+
+                    linkedin:
+                        "",
+
+
+                    instagram:
+                        "",
+
+
+                    github:
+                        "",
+
+
+
+
 
                     footerText:
                         "© 2026 Giltech Online Cyber. All rights reserved.",
+
+
                 },
+
             });
+
         }
 
+
+
         return NextResponse.json(settings);
+
+
+
     } catch (error) {
+
+
         console.error(error);
 
+
+
         return NextResponse.json(
+
             {
-                message: "Failed to load settings.",
+                message:
+                    "Failed to load settings.",
             },
+
             {
                 status: 500,
             }
+
         );
+
+
     }
+
 }
 
-export async function PATCH(req: NextRequest) {
+
+
+
+
+
+
+export async function PATCH(
+    req: NextRequest
+) {
+
+
     try {
+
+
         const body = await req.json();
 
-        const settings = await prisma.siteSettings.upsert({
-            where: {
-                id: 1,
-            },
-            update: {
-                ...body,
-            },
-            create: {
-                id: 1,
-                ...body,
-            },
-        });
+
+
+
+        const settings =
+            await prisma.siteSettings.upsert({
+
+                where: {
+
+                    id: 1,
+
+                },
+
+
+                update: {
+
+                    ...body,
+
+                },
+
+
+                create: {
+
+                    id: 1,
+
+                    ...body,
+
+                },
+
+
+            });
+
+
+
+
 
         return NextResponse.json(settings);
+
+
+
+
+
     } catch (error) {
+
+
         console.error(error);
 
+
+
         return NextResponse.json(
+
             {
-                message: "Failed to update settings.",
+                message:
+                    "Failed to update settings.",
             },
+
             {
                 status: 500,
             }
+
         );
+
+
     }
+
 }

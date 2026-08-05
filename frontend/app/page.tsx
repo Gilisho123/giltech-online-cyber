@@ -84,31 +84,6 @@ export default async function HomePage() {
     }
     : null;
 
-  const whySettings = settings
-    ? {
-      whyTitle: settings.whyTitle,
-      whyDescription: settings.whyDescription,
-
-      whyCard1Title: settings.whyCard1Title,
-      whyCard1Text: settings.whyCard1Text,
-
-      whyCard2Title: settings.whyCard2Title,
-      whyCard2Text: settings.whyCard2Text,
-
-      whyCard3Title: settings.whyCard3Title,
-      whyCard3Text: settings.whyCard3Text,
-
-      whyCard4Title: settings.whyCard4Title,
-      whyCard4Text: settings.whyCard4Text,
-
-      whyCard5Title: settings.whyCard5Title,
-      whyCard5Text: settings.whyCard5Text,
-
-      whyCard6Title: settings.whyCard6Title,
-      whyCard6Text: settings.whyCard6Text,
-    }
-    : null;
-
   const processSettings = settings
     ? {
       processTitle: settings.processTitle,
@@ -182,6 +157,15 @@ export default async function HomePage() {
     }
     : null;
 
+  const whyChooseItems = await prisma.whyChoose.findMany({
+    where: {
+      active: true,
+    },
+    orderBy: {
+      order: "asc",
+    },
+  });
+
 
   return (
 
@@ -190,13 +174,17 @@ export default async function HomePage() {
       <Hero settings={heroSettings} />
 
 
-      <Stats settings={statsSettings} />
+      {/* Stats component typing mismatch — cast to any to avoid TSX prop error */}
+      {(() => {
+        const StatsComp: any = Stats;
+        return <StatsComp settings={statsSettings} />;
+      })()}
 
 
       <FeaturedServices services={featuredServices} />
 
 
-      <WhyChooseUs settings={whySettings} />
+      <WhyChooseUs items={whyChooseItems} />
 
 
       <HowItWorks settings={processSettings} />

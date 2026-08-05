@@ -8,7 +8,9 @@ import Glow from "@/components/ui/Glow";
 
 
 interface HeroProps {
+
     settings: {
+
         companyName: string;
         tagline: string;
 
@@ -20,46 +22,75 @@ interface HeroProps {
 
         heroImage: string;
 
+
         heroCard1Title: string;
         heroCard1Text: string;
+
 
         heroCard2Title: string;
         heroCard2Text: string;
 
     } | null;
+
 }
 
 
 
-export default function Hero({ settings }: HeroProps) {
+
+
+export default function Hero({
+    settings,
+}: HeroProps) {
 
 
     const data = settings ?? {
 
-        companyName: "Giltech Online Cyber",
+        companyName:
+            "Giltech Online Cyber",
 
-        tagline: "Kenya's Digital Business Hub",
+        tagline:
+            "Kenya's Digital Business Hub",
 
-        heroTitle: "Digital Solutions For Modern Businesses",
+
+        heroTitle:
+            "Digital Solutions For Modern Businesses",
+
 
         heroSubtitle:
             "Government services, tax consultancy, data analytics, AI solutions, software development and digital transformation.",
 
-        heroButtonText: "Request Service",
 
-        heroButtonLink: "/contact",
+        heroButtonText:
+            "Request Service",
 
-        heroImage: "/images/hero.png",
 
-        heroCard1Title: "Experience",
+        heroButtonLink:
+            "/contact",
 
-        heroCard1Text: "170+ Professional Services",
 
-        heroCard2Title: "Technology",
+        heroImage:
+            "/images/hero.png",
 
-        heroCard2Text: "AI • Software • Data",
+
+
+        heroCard1Title:
+            "Experience",
+
+
+        heroCard1Text:
+            "170+ Professional Services",
+
+
+
+        heroCard2Title:
+            "Technology",
+
+
+        heroCard2Text:
+            "AI • Software • Data",
 
     };
+
 
 
 
@@ -73,6 +104,7 @@ export default function Hero({ settings }: HeroProps) {
             <Glow position="right" />
 
 
+
             <Container>
 
 
@@ -80,7 +112,7 @@ export default function Hero({ settings }: HeroProps) {
 
 
 
-                    {/* LEFT CONTENT */}
+                    {/* LEFT */}
 
 
                     <div>
@@ -91,6 +123,7 @@ export default function Hero({ settings }: HeroProps) {
                             {data.tagline}
 
                         </Badge>
+
 
 
 
@@ -111,19 +144,19 @@ export default function Hero({ settings }: HeroProps) {
 
 
 
+
+
                         <p className="mt-8 max-w-xl text-lg leading-8 text-slate-300">
 
-
                             {data.heroSubtitle}
-
 
                         </p>
 
 
 
 
-                        <div className="mt-10 flex flex-wrap gap-5">
 
+                        <div className="mt-10 flex flex-wrap gap-5">
 
 
                             <Link href={data.heroButtonLink}>
@@ -141,20 +174,18 @@ export default function Hero({ settings }: HeroProps) {
 
 
 
+
                             <Link href="/portfolio">
 
 
                                 <Button variant="secondary">
 
-
                                     View Portfolio
-
 
                                 </Button>
 
 
                             </Link>
-
 
 
                         </div>
@@ -163,34 +194,33 @@ export default function Hero({ settings }: HeroProps) {
 
 
 
-                        {/* TRUST BADGES */}
-
 
                         <div className="mt-12 flex flex-wrap gap-4">
 
 
-                            <div className="rounded-full border border-cyan-500/30 bg-cyan-500/10 px-5 py-3 text-sm">
-
-                                ✓ 170+ Professional Services
-
-                            </div>
-
-
-
-                            <div className="rounded-full border border-cyan-500/30 bg-cyan-500/10 px-5 py-3 text-sm">
-
-                                ✓ AI Powered Solutions
-
-                            </div>
+                            {
+                                [
+                                    "170+ Professional Services",
+                                    "AI Powered Solutions",
+                                    "Trusted Across Kenya",
+                                ].map((item) => (
 
 
+                                    <div
 
-                            <div className="rounded-full border border-cyan-500/30 bg-cyan-500/10 px-5 py-3 text-sm">
+                                        key={item}
 
-                                ✓ Trusted Across Kenya
+                                        className="rounded-full border border-cyan-500/30 bg-cyan-500/10 px-5 py-3 text-sm"
 
-                            </div>
+                                    >
 
+                                        ✓ {item}
+
+                                    </div>
+
+
+                                ))
+                            }
 
 
                         </div>
@@ -204,7 +234,8 @@ export default function Hero({ settings }: HeroProps) {
 
 
 
-                    {/* RIGHT IMAGE */}
+
+                    {/* RIGHT */}
 
 
 
@@ -217,7 +248,9 @@ export default function Hero({ settings }: HeroProps) {
 
 
 
+
                         <div className="relative">
+
 
 
                             <div className="overflow-hidden rounded-[40px] border border-white/10 bg-white/5 p-4 backdrop-blur-xl">
@@ -225,9 +258,14 @@ export default function Hero({ settings }: HeroProps) {
 
                                 <Image
 
-                                    src={data.heroImage || "/images/hero.png"}
+                                    src={
+                                        data.heroImage ||
+                                        "/images/hero.png"
+                                    }
 
-                                    alt={data.companyName}
+                                    alt={
+                                        data.companyName
+                                    }
 
                                     width={700}
 
@@ -246,7 +284,10 @@ export default function Hero({ settings }: HeroProps) {
 
 
 
-                            {/* CARD 1 */}
+
+
+
+                            {/* HERO CARD 1 */}
 
 
                             <div className="absolute -left-8 top-10 rounded-2xl border border-white/10 bg-[#081225]/90 p-5 backdrop-blur-xl">
@@ -273,7 +314,10 @@ export default function Hero({ settings }: HeroProps) {
 
 
 
-                            {/* CARD 2 */}
+
+
+
+                            {/* HERO CARD 2 */}
 
 
                             <div className="absolute -right-8 bottom-10 rounded-2xl border border-white/10 bg-[#081225]/90 p-5 backdrop-blur-xl">
@@ -297,11 +341,13 @@ export default function Hero({ settings }: HeroProps) {
 
 
 
+
                         </div>
 
 
 
                     </div>
+
 
 
 
