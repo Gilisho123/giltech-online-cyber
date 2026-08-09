@@ -8,6 +8,7 @@ import { signOut } from "next-auth/react";
 import {
     LayoutDashboard,
     Mail,
+    Briefcase,
     FolderOpen,
     Users,
     Settings,
@@ -15,6 +16,13 @@ import {
     Menu,
     X,
     Bell,
+    BarChart3,
+    ShieldCheck,
+    ListChecks,
+    Megaphone,
+    Star,
+    Handshake,
+    HelpCircle,
 } from "lucide-react";
 
 interface Props {
@@ -32,21 +40,73 @@ export default function AdminLayout({ children }: Props) {
             href: "/admin",
             icon: LayoutDashboard,
         },
+
         {
             name: "Contacts",
             href: "/admin/contacts",
             icon: Mail,
         },
+
         {
             name: "Services",
             href: "/admin/services",
+            icon: Briefcase,
+        },
+
+        {
+            name: "Portfolio",
+            href: "/admin/portfolio",
             icon: FolderOpen,
         },
+
+        {
+            name: "Stats",
+            href: "/admin/stats",
+            icon: BarChart3,
+        },
+
+        {
+            name: "Why Choose",
+            href: "/admin/why-choose",
+            icon: ShieldCheck,
+        },
+
+        {
+            name: "Process Steps",
+            href: "/admin/process",
+            icon: ListChecks,
+        },
+
+        {
+            name: "Call To Action",
+            href: "/admin/call-to-action",
+            icon: Megaphone,
+        },
+
+        {
+            name: "Testimonials",
+            href: "/admin/testimonials",
+            icon: Star,
+        },
+
+        {
+            name: "Partners",
+            href: "/admin/partners",
+            icon: Handshake,
+        },
+
+        {
+            name: "FAQ",
+            href: "/admin/faq",
+            icon: HelpCircle,
+        },
+
         {
             name: "Users",
             href: "/admin/users",
             icon: Users,
         },
+
         {
             name: "Settings",
             href: "/admin/settings",
@@ -120,7 +180,8 @@ export default function AdminLayout({ children }: Props) {
                         const Icon = item.icon;
 
                         const active =
-                            pathname === item.href;
+                            pathname === item.href ||
+                            pathname.startsWith(item.href + "/");
 
                         return (
 

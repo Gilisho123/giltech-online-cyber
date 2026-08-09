@@ -10,6 +10,13 @@ import {
     Users,
     Settings,
     LogOut,
+    BarChart3,
+    ShieldCheck,
+    ListChecks,
+    Megaphone,
+    Star,
+    Handshake,
+    HelpCircle,
 } from "lucide-react";
 
 const menuItems = [
@@ -18,11 +25,14 @@ const menuItems = [
         href: "/admin",
         icon: LayoutDashboard,
     },
+
     {
         name: "Contacts",
         href: "/admin/contacts",
         icon: Mail,
     },
+
+    // CMS
     {
         name: "Services",
         href: "/admin/services",
@@ -33,6 +43,43 @@ const menuItems = [
         href: "/admin/portfolio",
         icon: FolderOpen,
     },
+    {
+        name: "Stats",
+        href: "/admin/stats",
+        icon: BarChart3,
+    },
+    {
+        name: "Why Choose",
+        href: "/admin/why-choose",
+        icon: ShieldCheck,
+    },
+    {
+        name: "Process Steps",
+        href: "/admin/process",
+        icon: ListChecks,
+    },
+    {
+        name: "Call To Action",
+        href: "/admin/call-to-action",
+        icon: Megaphone,
+    },
+    {
+        name: "Testimonials",
+        href: "/admin/testimonials",
+        icon: Star,
+    },
+    {
+        name: "Partners",
+        href: "/admin/partners",
+        icon: Handshake,
+    },
+    {
+        name: "FAQ",
+        href: "/admin/faq",
+        icon: HelpCircle,
+    },
+
+    // Administration
     {
         name: "Users",
         href: "/admin/users",
@@ -71,7 +118,7 @@ export default function AdminSidebar() {
 
             {/* Navigation */}
 
-            <nav className="flex-1 space-y-2 p-5">
+            <nav className="flex-1 space-y-2 overflow-y-auto p-5">
 
                 {menuItems.map((item) => {
 
@@ -85,17 +132,19 @@ export default function AdminSidebar() {
                         <Link
                             key={item.name}
                             href={item.href}
-                            className={`flex items-center gap-4 rounded-2xl px-4 py-3 transition-all
-                            ${active
-                                    ? "bg-cyan-500 text-black font-bold"
+                            className={`flex items-center gap-4 rounded-2xl px-4 py-3 transition-all ${active
+                                    ? "bg-cyan-500 font-bold text-black"
                                     : "text-slate-300 hover:bg-white/5 hover:text-cyan-400"
                                 }`}
                         >
                             <Icon size={22} />
 
-                            {item.name}
+                            <span>
+                                {item.name}
+                            </span>
                         </Link>
                     );
+
                 })}
 
             </nav>
@@ -104,12 +153,12 @@ export default function AdminSidebar() {
 
             <div className="border-t border-cyan-500/20 p-5">
 
-                <button className="flex w-full items-center justify-center gap-3 rounded-2xl bg-red-600 py-3 font-bold text-white transition hover:bg-red-700">
-
+                <button
+                    className="flex w-full items-center justify-center gap-3 rounded-2xl bg-red-600 py-3 font-bold text-white transition hover:bg-red-700"
+                >
                     <LogOut size={20} />
 
                     Logout
-
                 </button>
 
             </div>

@@ -28,6 +28,12 @@ export default async function HomePage() {
     },
   });
 
+  const stats = await prisma.siteStats.findMany({
+    orderBy: {
+      order: "asc",
+    },
+  });
+
 
 
   const heroSettings = settings
@@ -62,25 +68,6 @@ export default async function HomePage() {
 
       heroCard2Text: settings.heroCard2Text,
 
-    }
-    : null;
-
-
-
-
-  const statsSettings = settings
-    ? {
-      stat1Number: settings.stat1Number,
-      stat1Label: settings.stat1Label,
-
-      stat2Number: settings.stat2Number,
-      stat2Label: settings.stat2Label,
-
-      stat3Number: settings.stat3Number,
-      stat3Label: settings.stat3Label,
-
-      stat4Number: settings.stat4Number,
-      stat4Label: settings.stat4Label,
     }
     : null;
 
@@ -155,10 +142,7 @@ export default async function HomePage() {
 
 
       {/* Stats component typing mismatch — cast to any to avoid TSX prop error */}
-      {(() => {
-        const StatsComp: any = Stats;
-        return <StatsComp settings={statsSettings} />;
-      })()}
+      <Stats stats={stats} />
 
 
       <FeaturedServices services={featuredServices} />

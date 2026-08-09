@@ -1,41 +1,39 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import ProcessTable from "./components/ProcessTable";
-import ProcessModal from "./components/ProcessModal";
-import DeleteProcessModal from "./components/DeleteProcessModal";
 
-interface ProcessStep {
+import FAQTable from "./components/FAQTable";
+import FAQModal from "./components/FAQModal";
+import DeleteFAQModal from "./components/DeleteFAQModal";
+
+interface FAQ {
     id: number;
-    stepNumber: number;
-    title: string;
-    description: string;
-    icon: string;
-    active: boolean;
+    question: string;
+    answer: string;
+    order: number;
+    featured: boolean;
 }
 
-interface ProcessForm {
-    stepNumber: number;
-    title: string;
-    description: string;
-    icon: string;
-    active: boolean;
+interface FAQForm {
+    question: string;
+    answer: string;
+    order: number;
+    featured: boolean;
 }
 
-const emptyForm: ProcessForm = {
-    stepNumber: 1,
-    title: "",
-    description: "",
-    icon: "🚀",
-    active: true,
+const emptyForm: FAQForm = {
+    question: "",
+    answer: "",
+    order: 0,
+    featured: true,
 };
 
-export default function ProcessPage() {
-    const [steps, setSteps] = useState<ProcessStep[]>([]);
-    const [form, setForm] = useState<ProcessForm>(emptyForm);
+export default function FAQPage() {
+    const [faqs, setFaqs] = useState<FAQ[]>([]);
+    const [form, setForm] = useState<FAQForm>(emptyForm);
 
     const [editingId, setEditingId] = useState<number | null>(null);
-    const [deleteId, setDeleteId] = useState<number | null>(null);
+    const [selectedFAQ, setSelectedFAQ] = useState<FAQ | null>(null);
 
     const [loading, setLoading] = useState(true);
     const [saving, setSaving] = useState(false);
@@ -45,23 +43,25 @@ export default function ProcessPage() {
     const [deleteModalOpen, setDeleteModalOpen] = useState(false);
 
     useEffect(() => {
-        loadSteps();
+        loadFAQs();
     }, []);
 
-    async function loadSteps() {
+    async function loadFAQs() {
         try {
-            const res = await fetch("/api/process");
+            setLoading(true);
+
+            const res = await fetch("/api/faq");
 
             if (!res.ok) {
-                throw new Error("Failed to load process steps");
+                throw new Error("Failed to load FAQs.");
             }
 
             const data = await res.json();
 
-            setSteps(data);
+            setFaqs(Array.isArray(data) ? data : []);
         } catch (error) {
             console.error(error);
-            alert("Failed to load process steps.");
+            alert("Failed to load FAQs.");
         } finally {
             setLoading(false);
         }
@@ -69,22 +69,23 @@ export default function ProcessPage() {
 
     function openAddModal() {
         setEditingId(null);
+
         setForm({
             ...emptyForm,
-            stepNumber: steps.length + 1,
+            order: faqs.length,
         });
+
         setModalOpen(true);
     }
 
-    function openEditModal(step: ProcessStep) {
-        setEditingId(step.id);
+    function openEditModal(faq: FAQ) {
+        setEditingId(faq.id);
 
         setForm({
-            stepNumber: step.stepNumber,
-            title: step.title,
-            description: step.description,
-            icon: step.icon,
-            active: step.active,
+            question: faq.question,
+            answer: faq.answer,
+            order: faq.order,
+            featured: faq.featured,
         });
 
         setModalOpen(true);
@@ -98,20 +99,27 @@ export default function ProcessPage() {
         setForm(emptyForm);
     }
 
-    async function saveStep() {
-        if (!form.title.trim() || !form.description.trim()) {
-            alert("Please complete the title and description.");
+    async function saveFAQ() {
+        if (!form.question.trim() || !form.answer.trim()) {
+            alert("Please complete the question and answer.");
+            return;
+        }
+
+        if (form.order < 0) {
+            alert("Display order cannot be negative.");
             return;
         }
 
         setSaving(true);
 
         try {
-            const url = editingId
-                ? `/api/process/${editingId}`
-                : "/api/process";
+            const isEditing = editingId !== null;
 
-            const method = editingId ? "PATCH" : "POST";
+            const url = isEditing
+                ? `/api/faq/${editingId}`
+                : "/api/faq";
+
+            const method = isEditing ? "PATCH" : "POST";
 
             const res = await fetch(url, {
                 method,
@@ -122,24 +130,24 @@ export default function ProcessPage() {
             });
 
             if (!res.ok) {
-                throw new Error("Failed to save process step");
+                throw new Error("Failed to save FAQ.");
             }
 
             setModalOpen(false);
             setEditingId(null);
             setForm(emptyForm);
 
-            await loadSteps();
+            await loadFAQs();
         } catch (error) {
             console.error(error);
-            alert("Failed to save process step.");
+            alert("Failed to save FAQ.");
         } finally {
             setSaving(false);
         }
     }
 
-    function openDeleteModal(id: number) {
-        setDeleteId(id);
+    function openDeleteModal(faq: FAQ) {
+        setSelectedFAQ(faq);
         setDeleteModalOpen(true);
     }
 
@@ -147,43 +155,36 @@ export default function ProcessPage() {
         if (deleting) return;
 
         setDeleteModalOpen(false);
-        setDeleteId(null);
+        setSelectedFAQ(null);
     }
 
-    async function deleteStep() {
-        if (!deleteId) return;
+    async function deleteFAQ() {
+        if (!selectedFAQ) return;
 
         setDeleting(true);
 
         try {
-            const res = await fetch(`/api/process/${deleteId}`, {
-                method: "DELETE",
-            });
+            const res = await fetch(
+                `/api/faq/${selectedFAQ.id}`,
+                {
+                    method: "DELETE",
+                }
+            );
 
             if (!res.ok) {
-                throw new Error("Failed to delete process step");
+                throw new Error("Failed to delete FAQ.");
             }
 
             setDeleteModalOpen(false);
-            setDeleteId(null);
+            setSelectedFAQ(null);
 
-            await loadSteps();
+            await loadFAQs();
         } catch (error) {
             console.error(error);
-            alert("Failed to delete process step.");
+            alert("Failed to delete FAQ.");
         } finally {
             setDeleting(false);
         }
-    }
-
-    if (loading) {
-        return (
-            <main className="p-8">
-                <div className="rounded-3xl bg-white p-12 text-center shadow">
-                    Loading Process Steps...
-                </div>
-            </main>
-        );
     }
 
     return (
@@ -195,11 +196,11 @@ export default function ProcessPage() {
 
                 <div>
                     <h1 className="text-4xl font-black text-slate-800">
-                        Process Steps
+                        Frequently Asked Questions
                     </h1>
 
                     <p className="mt-2 text-slate-500">
-                        Manage the steps displayed in the How It Works section.
+                        Manage questions and answers displayed on the website.
                     </p>
                 </div>
 
@@ -208,42 +209,50 @@ export default function ProcessPage() {
                     onClick={openAddModal}
                     className="rounded-xl bg-cyan-600 px-6 py-3 font-bold text-white shadow-sm transition hover:bg-cyan-700"
                 >
-                    + Add Step
+                    + Add FAQ
                 </button>
 
             </div>
 
             {/* Statistics */}
 
-            <div className="grid gap-4 sm:grid-cols-3">
+            <div className="grid gap-5 md:grid-cols-3">
 
                 <div className="rounded-2xl bg-white p-6 shadow">
                     <p className="text-sm font-semibold text-slate-500">
-                        Total Steps
+                        Total FAQs
                     </p>
 
                     <p className="mt-2 text-3xl font-black text-slate-800">
-                        {steps.length}
+                        {faqs.length}
                     </p>
                 </div>
 
                 <div className="rounded-2xl bg-white p-6 shadow">
                     <p className="text-sm font-semibold text-slate-500">
-                        Active
+                        Featured FAQs
                     </p>
 
-                    <p className="mt-2 text-3xl font-black text-green-600">
-                        {steps.filter((step) => step.active).length}
+                    <p className="mt-2 text-3xl font-black text-cyan-600">
+                        {
+                            faqs.filter(
+                                (faq) => faq.featured
+                            ).length
+                        }
                     </p>
                 </div>
 
                 <div className="rounded-2xl bg-white p-6 shadow">
                     <p className="text-sm font-semibold text-slate-500">
-                        Inactive
+                        Other FAQs
                     </p>
 
-                    <p className="mt-2 text-3xl font-black text-red-600">
-                        {steps.filter((step) => !step.active).length}
+                    <p className="mt-2 text-3xl font-black text-slate-800">
+                        {
+                            faqs.filter(
+                                (faq) => !faq.featured
+                            ).length
+                        }
                     </p>
                 </div>
 
@@ -251,31 +260,40 @@ export default function ProcessPage() {
 
             {/* Table */}
 
-            <ProcessTable
-                steps={steps}
-                onEdit={openEditModal}
-                onDelete={openDeleteModal}
-            />
+            {loading ? (
+                <div className="rounded-3xl bg-white p-12 text-center shadow">
+                    <p className="text-slate-500">
+                        Loading FAQs...
+                    </p>
+                </div>
+            ) : (
+                <FAQTable
+                    faqs={faqs}
+                    onEdit={openEditModal}
+                    onDelete={openDeleteModal}
+                />
+            )}
 
-            {/* Add / Edit Modal */}
+            {/* Add / Edit */}
 
-            <ProcessModal
+            <FAQModal
                 open={modalOpen}
                 onClose={closeModal}
                 form={form}
                 setForm={setForm}
-                onSave={saveStep}
+                onSave={saveFAQ}
                 loading={saving}
                 editing={editingId !== null}
             />
 
             {/* Delete Confirmation */}
 
-            <DeleteProcessModal
+            <DeleteFAQModal
                 open={deleteModalOpen}
                 onClose={closeDeleteModal}
-                onConfirm={deleteStep}
+                onConfirm={deleteFAQ}
                 loading={deleting}
+                question={selectedFAQ?.question}
             />
 
         </main>

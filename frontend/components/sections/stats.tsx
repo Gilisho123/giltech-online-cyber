@@ -1,93 +1,36 @@
 "use client";
 
-import { useEffect, useState } from "react";
-
-interface Stat {
+interface StatItem {
   id: number;
   value: string;
   label: string;
-  order: number;
 }
 
-export default function Stats() {
+interface StatsProps {
+  stats: StatItem[];
+}
 
-  const [stats, setStats] = useState<Stat[]>([]);
-
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-
-    async function loadStats() {
-
-      try {
-
-        const res = await fetch("/api/stats");
-
-        const data = await res.json();
-
-        setStats(data);
-
-      } catch (error) {
-
-        console.error(error);
-
-      } finally {
-
-        setLoading(false);
-
-      }
-
-    }
-
-    loadStats();
-
-  }, []);
-
-  if (loading) {
-
-    return (
-      <section className="bg-[#081225] py-20">
-        <div className="mx-auto max-w-7xl px-6 text-center text-slate-400">
-          Loading statistics...
-        </div>
-      </section>
-    );
-
-  }
-
+export default function Stats({ stats }: StatsProps) {
   return (
+    <section className="bg-white py-20">
+      <div className="mx-auto max-w-7xl px-6">
+        <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-4">
+          {stats.map((stat) => (
+            <div
+              key={stat.id}
+              className="rounded-3xl border border-slate-200 bg-white p-8 text-center shadow-sm transition duration-300 hover:-translate-y-2 hover:border-cyan-500 hover:shadow-xl"
+            >
+              <h3 className="text-5xl font-black text-cyan-600">
+                {stat.value}
+              </h3>
 
-    <section className="bg-[#081225] py-20">
-
-      <div className="mx-auto grid max-w-7xl grid-cols-2 gap-6 px-6 md:grid-cols-4">
-
-        {stats.map((item) => (
-
-          <div
-            key={item.id}
-            className="rounded-2xl border border-white/10 bg-white/5 p-8 text-center backdrop-blur-xl transition hover:-translate-y-2 hover:border-cyan-400"
-          >
-
-            <h2 className="text-4xl font-black text-cyan-400">
-
-              {item.value}
-
-            </h2>
-
-            <p className="mt-3 text-slate-300">
-
-              {item.label}
-
-            </p>
-
-          </div>
-
-        ))}
-
+              <p className="mt-4 text-lg font-medium text-slate-600">
+                {stat.label}
+              </p>
+            </div>
+          ))}
+        </div>
       </div>
-
     </section>
-
   );
-
 }

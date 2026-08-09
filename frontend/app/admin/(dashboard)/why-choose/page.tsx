@@ -1,6 +1,9 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import WhyChooseTable from "./components/WhyChooseTable";
+import WhyChooseModal from "./components/WhyChooseModal";
+import DeleteWhyChooseModal from "./components/DeleteWhyChooseModal";
 
 interface WhyChoose {
     id: number;
@@ -11,7 +14,15 @@ interface WhyChoose {
     active: boolean;
 }
 
-const emptyForm = {
+interface WhyChooseForm {
+    title: string;
+    description: string;
+    icon: string;
+    order: number;
+    active: boolean;
+}
+
+const emptyForm: WhyChooseForm = {
     title: "",
     description: "",
     icon: "🚀",
@@ -20,270 +31,253 @@ const emptyForm = {
 };
 
 export default function WhyChoosePage() {
-
     const [items, setItems] = useState<WhyChoose[]>([]);
-    const [form, setForm] = useState(emptyForm);
+    const [form, setForm] = useState<WhyChooseForm>(emptyForm);
+
     const [editingId, setEditingId] = useState<number | null>(null);
+    const [deleteId, setDeleteId] = useState<number | null>(null);
+
     const [loading, setLoading] = useState(true);
+    const [saving, setSaving] = useState(false);
+    const [deleting, setDeleting] = useState(false);
+
+    const [modalOpen, setModalOpen] = useState(false);
+    const [deleteModalOpen, setDeleteModalOpen] = useState(false);
 
     useEffect(() => {
         loadItems();
     }, []);
 
     async function loadItems() {
+        try {
+            const res = await fetch("/api/why-choose");
 
-        const res = await fetch("/api/why-choose");
-        const data = await res.json();
+            if (!res.ok) {
+                throw new Error("Failed to load items");
+            }
 
-        setItems(data);
+            const data = await res.json();
 
-        setLoading(false);
+            setItems(data);
+        } catch (error) {
+            console.error(error);
+            alert("Failed to load Why Choose items.");
+        } finally {
+            setLoading(false);
+        }
+    }
 
+    function openAddModal() {
+        setEditingId(null);
+        setForm(emptyForm);
+        setModalOpen(true);
+    }
+
+    function openEditModal(item: WhyChoose) {
+        setEditingId(item.id);
+
+        setForm({
+            title: item.title,
+            description: item.description,
+            icon: item.icon,
+            order: item.order,
+            active: item.active,
+        });
+
+        setModalOpen(true);
+    }
+
+    function closeModal() {
+        if (saving) return;
+
+        setModalOpen(false);
+        setEditingId(null);
+        setForm(emptyForm);
     }
 
     async function saveItem() {
-
-        if (!form.title || !form.description) {
-            return alert("Please complete all fields.");
+        if (!form.title.trim() || !form.description.trim()) {
+            alert("Please complete the title and description.");
+            return;
         }
 
-        if (editingId) {
+        setSaving(true);
 
-            await fetch(`/api/why-choose/${editingId}`, {
-                method: "PATCH",
+        try {
+            const url = editingId
+                ? `/api/why-choose/${editingId}`
+                : "/api/why-choose";
+
+            const method = editingId ? "PATCH" : "POST";
+
+            const res = await fetch(url, {
+                method,
                 headers: {
                     "Content-Type": "application/json",
                 },
                 body: JSON.stringify(form),
             });
 
-        } else {
+            if (!res.ok) {
+                throw new Error("Failed to save item");
+            }
 
-            await fetch("/api/why-choose", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify(form),
-            });
+            setModalOpen(false);
+            setEditingId(null);
+            setForm(emptyForm);
 
+            await loadItems();
+        } catch (error) {
+            console.error(error);
+            alert("Failed to save Why Choose item.");
+        } finally {
+            setSaving(false);
         }
-
-        setEditingId(null);
-        setForm(emptyForm);
-
-        loadItems();
-
     }
 
-    async function deleteItem(id: number) {
+    function openDeleteModal(id: number) {
+        setDeleteId(id);
+        setDeleteModalOpen(true);
+    }
 
-        if (!confirm("Delete this card?")) return;
+    function closeDeleteModal() {
+        if (deleting) return;
 
-        await fetch(`/api/why-choose/${id}`, {
-            method: "DELETE",
-        });
+        setDeleteModalOpen(false);
+        setDeleteId(null);
+    }
 
-        loadItems();
+    async function deleteItem() {
+        if (!deleteId) return;
 
+        setDeleting(true);
+
+        try {
+            const res = await fetch(
+                `/api/why-choose/${deleteId}`,
+                {
+                    method: "DELETE",
+                }
+            );
+
+            if (!res.ok) {
+                throw new Error("Failed to delete item");
+            }
+
+            setDeleteModalOpen(false);
+            setDeleteId(null);
+
+            await loadItems();
+        } catch (error) {
+            console.error(error);
+            alert("Failed to delete Why Choose item.");
+        } finally {
+            setDeleting(false);
+        }
     }
 
     if (loading) {
-
-        return <div>Loading...</div>;
-
+        return (
+            <main className="p-8">
+                <div className="rounded-3xl bg-white p-12 text-center shadow">
+                    Loading Why Choose...
+                </div>
+            </main>
+        );
     }
 
     return (
-
         <main className="space-y-8">
 
-            <div>
+            {/* Header */}
 
-                <h1 className="text-4xl font-black">
-                    Why Choose Us
-                </h1>
+            <div className="flex flex-col justify-between gap-4 md:flex-row md:items-center">
 
-                <p className="text-slate-500">
-                    Manage homepage feature cards.
-                </p>
+                <div>
+                    <h1 className="text-4xl font-black text-slate-800">
+                        Why Choose Us
+                    </h1>
 
-            </div>
-
-            <div className="rounded-3xl bg-white p-8 shadow space-y-4">
-
-                <input
-                    className="w-full rounded-xl border p-3"
-                    placeholder="Title"
-                    value={form.title}
-                    onChange={(e) =>
-                        setForm({
-                            ...form,
-                            title: e.target.value,
-                        })
-                    }
-                />
-
-                <textarea
-                    rows={4}
-                    className="w-full rounded-xl border p-3"
-                    placeholder="Description"
-                    value={form.description}
-                    onChange={(e) =>
-                        setForm({
-                            ...form,
-                            description: e.target.value,
-                        })
-                    }
-                />
-
-                <input
-                    className="w-full rounded-xl border p-3"
-                    placeholder="Icon (🚀)"
-                    value={form.icon}
-                    onChange={(e) =>
-                        setForm({
-                            ...form,
-                            icon: e.target.value,
-                        })
-                    }
-                />
-
-                <input
-                    type="number"
-                    className="w-full rounded-xl border p-3"
-                    placeholder="Order"
-                    value={form.order}
-                    onChange={(e) =>
-                        setForm({
-                            ...form,
-                            order: Number(e.target.value),
-                        })
-                    }
-                />
-
-                <label className="flex items-center gap-3">
-
-                    <input
-                        type="checkbox"
-                        checked={form.active}
-                        onChange={(e) =>
-                            setForm({
-                                ...form,
-                                active: e.target.checked,
-                            })
-                        }
-                    />
-
-                    Active
-
-                </label>
+                    <p className="mt-2 text-slate-500">
+                        Manage the feature cards displayed on the homepage.
+                    </p>
+                </div>
 
                 <button
-                    onClick={saveItem}
-                    className="rounded-xl bg-cyan-600 px-6 py-3 font-bold text-white"
+                    type="button"
+                    onClick={openAddModal}
+                    className="rounded-xl bg-cyan-600 px-6 py-3 font-bold text-white shadow-sm transition hover:bg-cyan-700"
                 >
-                    {editingId ? "Update Card" : "Add Card"}
+                    + Add Card
                 </button>
 
             </div>
 
-            <div className="overflow-hidden rounded-3xl bg-white shadow">
+            {/* Statistics */}
 
-                <table className="w-full">
+            <div className="grid gap-4 sm:grid-cols-3">
 
-                    <thead className="bg-slate-100">
+                <div className="rounded-2xl bg-white p-6 shadow">
+                    <p className="text-sm font-semibold text-slate-500">
+                        Total Cards
+                    </p>
 
-                        <tr>
+                    <p className="mt-2 text-3xl font-black text-slate-800">
+                        {items.length}
+                    </p>
+                </div>
 
-                            <th className="p-4">Icon</th>
-                            <th className="p-4 text-left">Title</th>
-                            <th className="p-4 text-left">Description</th>
-                            <th className="p-4">Order</th>
-                            <th className="p-4">Status</th>
-                            <th className="p-4">Actions</th>
+                <div className="rounded-2xl bg-white p-6 shadow">
+                    <p className="text-sm font-semibold text-slate-500">
+                        Active
+                    </p>
 
-                        </tr>
+                    <p className="mt-2 text-3xl font-black text-green-600">
+                        {items.filter((item) => item.active).length}
+                    </p>
+                </div>
 
-                    </thead>
+                <div className="rounded-2xl bg-white p-6 shadow">
+                    <p className="text-sm font-semibold text-slate-500">
+                        Inactive
+                    </p>
 
-                    <tbody>
-
-                        {items.map((item) => (
-
-                            <tr
-                                key={item.id}
-                                className="border-t"
-                            >
-
-                                <td className="p-4 text-3xl">
-                                    {item.icon}
-                                </td>
-
-                                <td className="p-4">
-                                    {item.title}
-                                </td>
-
-                                <td className="p-4">
-                                    {item.description}
-                                </td>
-
-                                <td className="p-4 text-center">
-                                    {item.order}
-                                </td>
-
-                                <td className="p-4 text-center">
-
-                                    {item.active
-                                        ? "✅"
-                                        : "❌"}
-
-                                </td>
-
-                                <td className="p-4 flex gap-4">
-
-                                    <button
-                                        className="text-blue-600"
-                                        onClick={() => {
-
-                                            setEditingId(item.id);
-
-                                            setForm({
-                                                title: item.title,
-                                                description: item.description,
-                                                icon: item.icon,
-                                                order: item.order,
-                                                active: item.active,
-                                            });
-
-                                        }}
-                                    >
-                                        Edit
-                                    </button>
-
-                                    <button
-                                        className="text-red-600"
-                                        onClick={() =>
-                                            deleteItem(item.id)
-                                        }
-                                    >
-                                        Delete
-                                    </button>
-
-                                </td>
-
-                            </tr>
-
-                        ))}
-
-                    </tbody>
-
-                </table>
+                    <p className="mt-2 text-3xl font-black text-red-600">
+                        {items.filter((item) => !item.active).length}
+                    </p>
+                </div>
 
             </div>
 
+            {/* Table */}
+
+            <WhyChooseTable
+                items={items}
+                onEdit={openEditModal}
+                onDelete={openDeleteModal}
+            />
+
+            {/* Add / Edit Modal */}
+
+            <WhyChooseModal
+                open={modalOpen}
+                onClose={closeModal}
+                form={form}
+                setForm={setForm}
+                onSave={saveItem}
+                loading={saving}
+                editing={editingId !== null}
+            />
+
+            {/* Delete Confirmation */}
+
+            <DeleteWhyChooseModal
+                open={deleteModalOpen}
+                onClose={closeDeleteModal}
+                onConfirm={deleteItem}
+                loading={deleting}
+            />
+
         </main>
-
     );
-
 }
