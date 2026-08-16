@@ -25,9 +25,9 @@ export default function CallToAction({
 
     return (
 
-        <section className="bg-gradient-to-r from-cyan-600 to-blue-700 py-24">
+        <section className="bg-[#021b2a] py-24">
 
-            <div className="mx-auto max-w-5xl px-6 text-center">
+            <div className="mx-auto max-w-5xl rounded-[32px] border border-white/10 bg-gradient-to-r from-cyan-600 to-blue-700 px-6 py-16 text-center shadow-xl shadow-cyan-900/20">
 
                 <h2 className="text-4xl font-black text-white md:text-5xl">
 
