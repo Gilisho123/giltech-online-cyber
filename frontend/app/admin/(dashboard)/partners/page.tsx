@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import ImageUploader from "@/components/admin/ImageUploader";
 
 interface Partner {
     id: number;
@@ -37,7 +38,6 @@ export default function PartnersPage() {
             }
 
             const data = await res.json();
-
             setPartners(data);
         } catch (error) {
             console.error(error);
@@ -161,7 +161,6 @@ export default function PartnersPage() {
 
     return (
         <main className="space-y-8">
-
             {/* HEADER */}
 
             <div>
@@ -170,15 +169,13 @@ export default function PartnersPage() {
                 </h1>
 
                 <p className="mt-2 text-slate-500">
-                    Manage business partners and logos displayed on the
-                    website.
+                    Manage business partners and logos displayed on the website.
                 </p>
             </div>
 
             {/* FORM */}
 
             <div className="rounded-3xl bg-white p-8 shadow">
-
                 <div className="mb-6">
                     <h2 className="text-2xl font-bold text-slate-800">
                         {editingId ? "Edit Partner" : "Add Partner"}
@@ -190,7 +187,6 @@ export default function PartnersPage() {
                 </div>
 
                 <div className="space-y-5">
-
                     {/* NAME */}
 
                     <div>
@@ -212,20 +208,19 @@ export default function PartnersPage() {
 
                     <div>
                         <label className="mb-2 block text-sm font-semibold text-slate-700">
-                            Logo URL
+                            Partner Logo
                         </label>
 
-                        <input
+                        <ImageUploader
                             value={form.logo}
-                            onChange={(e) =>
-                                updateForm("logo", e.target.value)
+                            onChange={(url) =>
+                                updateForm("logo", url)
                             }
-                            placeholder="/images/partners/company.png"
-                            className="w-full rounded-xl border border-slate-200 p-3 outline-none focus:border-cyan-500"
                         />
 
-                        <p className="mt-1 text-xs text-slate-400">
-                            Image upload management will be added later.
+                        <p className="mt-2 text-xs text-slate-500">
+                            Upload the partner logo. The image will be stored in
+                            Cloudinary automatically.
                         </p>
                     </div>
 
@@ -270,7 +265,6 @@ export default function PartnersPage() {
                 {/* BUTTONS */}
 
                 <div className="mt-6 flex flex-wrap gap-3">
-
                     <button
                         onClick={savePartner}
                         disabled={saving}
@@ -295,12 +289,10 @@ export default function PartnersPage() {
                 </div>
             </div>
 
-            {/* PARTNERS TABLE */}
+            {/* TABLE */}
 
             <div className="overflow-hidden rounded-3xl bg-white shadow">
-
                 <div className="border-b border-slate-100 p-6">
-
                     <h2 className="text-xl font-bold text-slate-800">
                         Existing Partners
                     </h2>
@@ -309,52 +301,31 @@ export default function PartnersPage() {
                         {partners.length} partner
                         {partners.length === 1 ? "" : "s"} found.
                     </p>
-
                 </div>
 
                 <div className="overflow-x-auto">
-
                     <table className="w-full min-w-[800px]">
-
                         <thead className="bg-slate-100">
-
                             <tr>
-
-                                <th className="p-4 text-left">
-                                    Logo
-                                </th>
-
-                                <th className="p-4 text-left">
-                                    Name
-                                </th>
-
-                                <th className="p-4 text-left">
-                                    Website
-                                </th>
-
+                                <th className="p-4 text-left">Logo</th>
+                                <th className="p-4 text-left">Name</th>
+                                <th className="p-4 text-left">Website</th>
                                 <th className="p-4 text-center">
                                     Featured
                                 </th>
-
                                 <th className="p-4 text-center">
                                     Actions
                                 </th>
-
                             </tr>
-
                         </thead>
 
                         <tbody>
-
                             {partners.map((partner) => (
-
                                 <tr
                                     key={partner.id}
                                     className="border-t border-slate-100"
                                 >
-
                                     <td className="p-4">
-
                                         <img
                                             src={
                                                 partner.logo ||
@@ -363,7 +334,6 @@ export default function PartnersPage() {
                                             alt={partner.name}
                                             className="h-14 w-24 rounded-lg object-contain"
                                         />
-
                                     </td>
 
                                     <td className="p-4 font-semibold">
@@ -375,18 +345,16 @@ export default function PartnersPage() {
                                     </td>
 
                                     <td className="p-4 text-center">
-                                        {partner.featured
-                                            ? "✅"
-                                            : "❌"}
+                                        {partner.featured ? "✅" : "❌"}
                                     </td>
 
                                     <td className="p-4">
-
                                         <div className="flex justify-center gap-4">
-
                                             <button
                                                 onClick={() =>
-                                                    editPartner(partner)
+                                                    editPartner(
+                                                        partner
+                                                    )
                                                 }
                                                 className="font-semibold text-blue-600 hover:text-blue-800"
                                             >
@@ -403,39 +371,25 @@ export default function PartnersPage() {
                                             >
                                                 Delete
                                             </button>
-
                                         </div>
-
                                     </td>
-
                                 </tr>
-
                             ))}
 
                             {partners.length === 0 && (
-
                                 <tr>
-
                                     <td
                                         colSpan={5}
                                         className="p-12 text-center text-slate-500"
                                     >
                                         No partners yet.
-
                                     </td>
-
                                 </tr>
-
                             )}
-
                         </tbody>
-
                     </table>
-
                 </div>
-
             </div>
-
         </main>
     );
 }
