@@ -13,6 +13,9 @@ export async function POST(req: NextRequest) {
 
         const file = formData.get("file") as File | null;
 
+        const folder =
+            (formData.get("folder") as string) || "general";
+
         if (!file) {
             return NextResponse.json(
                 { message: "No file uploaded." },
@@ -26,7 +29,7 @@ export async function POST(req: NextRequest) {
         const dataUri = `data:${file.type};base64,${buffer.toString("base64")}`;
 
         const result = await cloudinary.uploader.upload(dataUri, {
-            folder: "giltech/portfolio",
+            folder: `giltech/${folder}`,
         });
 
         return NextResponse.json({

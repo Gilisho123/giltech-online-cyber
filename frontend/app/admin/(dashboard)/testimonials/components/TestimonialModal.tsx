@@ -1,5 +1,5 @@
 "use client";
-
+import ImageUploader from "@/components/admin/ImageUploader";
 interface TestimonialForm {
     name: string;
     position: string;
@@ -175,27 +175,25 @@ export default function TestimonialModal({
 
                     </div>
 
-                    {/* Image */}
+                    {/* Client Photo */}
 
                     <div>
                         <label className="mb-2 block font-semibold text-slate-700">
-                            Image URL
+                            Client Photo
                         </label>
 
-                        <input
+                        <ImageUploader
                             value={form.image}
-                            onChange={(e) =>
+                            onChange={(url) =>
                                 setForm({
                                     ...form,
-                                    image: e.target.value,
+                                    image: url,
                                 })
                             }
-                            className="w-full rounded-xl border border-slate-200 p-3 outline-none focus:border-cyan-500"
-                            placeholder="/avatar.png"
                         />
 
                         <p className="mt-2 text-xs text-slate-400">
-                            Enter an image URL or public image path.
+                            Upload a customer photo. It will be stored securely in Cloudinary.
                         </p>
                     </div>
 

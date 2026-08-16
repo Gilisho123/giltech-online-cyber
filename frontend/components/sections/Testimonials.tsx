@@ -1,3 +1,4 @@
+import Image from "next/image";
 interface TestimonialsProps {
     testimonials: {
         id: number;
@@ -67,10 +68,12 @@ export default function Testimonials({
 
                             <div className="mt-8 flex items-center gap-4">
 
-                                <img
+                                <Image
                                     src={testimonial.image || "/avatar.png"}
                                     alt={testimonial.name}
-                                    className="h-14 w-14 rounded-full object-cover"
+                                    width={56}
+                                    height={56}
+                                    className="rounded-full object-cover"
                                 />
 
                                 <div>

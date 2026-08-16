@@ -1,5 +1,5 @@
 "use client";
-
+import Image from "next/image";
 interface Testimonial {
     id: number;
     name: string;
@@ -78,18 +78,23 @@ export default function TestimonialTable({
 
                                         <div className="flex items-center gap-3">
 
-                                            <img
-                                                src={
-                                                    testimonial.image ||
-                                                    "/avatar.png"
-                                                }
+                                            <Image
+                                                src={testimonial.image || "/avatar.png"}
                                                 alt={testimonial.name}
-                                                className="h-12 w-12 rounded-full object-cover"
+                                                width={48}
+                                                height={48}
+                                                className="rounded-full object-cover"
                                             />
 
-                                            <span className="font-semibold text-slate-800">
-                                                {testimonial.name}
-                                            </span>
+                                            <div>
+                                                <p className="font-semibold text-slate-800">
+                                                    {testimonial.name}
+                                                </p>
+
+                                                <p className="text-xs text-slate-500">
+                                                    Client
+                                                </p>
+                                            </div>
 
                                         </div>
 

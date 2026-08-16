@@ -1,16 +1,19 @@
 "use client";
 
 import { useRef, useState } from "react";
+import Image from "next/image";
 import { Image as ImageIcon, Upload, X } from "lucide-react";
 
 interface ImageUploaderProps {
     value?: string;
     onChange: (url: string) => void;
+    folder?: string;
 }
 
 export default function ImageUploader({
     value = "",
     onChange,
+    folder = "general",
 }: ImageUploaderProps) {
     const inputRef = useRef<HTMLInputElement | null>(null);
 
@@ -27,7 +30,7 @@ export default function ImageUploader({
         setError("");
 
         if (!file.type.startsWith("image/")) {
-            setError("Please select an image file.");
+            setError("Please select a valid image.");
             return;
         }
 
@@ -44,6 +47,7 @@ export default function ImageUploader({
             const formData = new FormData();
 
             formData.append("file", file);
+            formData.append("folder", folder);
 
             const response = await fetch("/api/upload", {
                 method: "POST",
@@ -59,12 +63,12 @@ export default function ImageUploader({
             }
 
             onChange(data.url);
-        } catch (error) {
-            console.error(error);
+        } catch (err) {
+            console.error(err);
 
             setError(
-                error instanceof Error
-                    ? error.message
+                err instanceof Error
+                    ? err.message
                     : "Image upload failed."
             );
         } finally {
@@ -83,22 +87,21 @@ export default function ImageUploader({
 
     return (
         <div className="space-y-3">
-
             <input
                 ref={inputRef}
                 type="file"
                 accept="image/*"
-                onChange={handleUpload}
                 className="hidden"
+                onChange={handleUpload}
             />
 
             {value ? (
-
                 <div className="relative overflow-hidden rounded-2xl border border-slate-200 bg-slate-50">
-
-                    <img
+                    <Image
                         src={value}
                         alt="Uploaded preview"
+                        width={1200}
+                        height={700}
                         className="h-56 w-full object-cover"
                     />
 
@@ -109,20 +112,15 @@ export default function ImageUploader({
                     >
                         <X size={18} />
                     </button>
-
                 </div>
-
             ) : (
-
                 <button
                     type="button"
                     onClick={() => inputRef.current?.click()}
                     disabled={uploading}
                     className="flex w-full flex-col items-center justify-center rounded-2xl border-2 border-dashed border-slate-300 bg-slate-50 px-6 py-10 text-center transition hover:border-cyan-500 hover:bg-cyan-50 disabled:cursor-not-allowed disabled:opacity-60"
                 >
-
                     {uploading ? (
-
                         <>
                             <Upload
                                 size={32}
@@ -132,10 +130,12 @@ export default function ImageUploader({
                             <p className="mt-3 font-semibold text-slate-700">
                                 Uploading image...
                             </p>
+
+                            <p className="mt-1 text-sm text-slate-500">
+                                Please wait...
+                            </p>
                         </>
-
                     ) : (
-
                         <>
                             <ImageIcon
                                 size={32}
@@ -147,14 +147,11 @@ export default function ImageUploader({
                             </p>
 
                             <p className="mt-1 text-sm text-slate-500">
-                                PNG, JPG, JPEG or WEBP · Maximum 5MB
+                                PNG, JPG, JPEG or WEBP • Maximum 5MB
                             </p>
                         </>
-
                     )}
-
                 </button>
-
             )}
 
             {error && (
@@ -162,7 +159,6 @@ export default function ImageUploader({
                     {error}
                 </p>
             )}
-
         </div>
     );
 }
