@@ -1,4 +1,5 @@
 import Image from "next/image";
+
 interface TestimonialsProps {
     testimonials: {
         id: number;
@@ -14,17 +15,11 @@ interface TestimonialsProps {
 export default function Testimonials({
     testimonials,
 }: TestimonialsProps) {
-
     return (
-
         <section className="bg-[#081225] py-24">
-
             <div className="mx-auto max-w-7xl px-6">
-
                 {/* Heading */}
-
                 <div className="text-center">
-
                     <span className="rounded-full border border-cyan-400/30 bg-cyan-500/10 px-4 py-2 text-sm font-semibold uppercase tracking-wider text-cyan-300">
                         Testimonials
                     </span>
@@ -36,48 +31,38 @@ export default function Testimonials({
                     <p className="mx-auto mt-6 max-w-3xl text-lg text-slate-300">
                         Real experiences from satisfied clients and businesses.
                     </p>
-
                 </div>
 
-                {/* Cards */}
-
+                {/* Testimonial Cards */}
                 <div className="mt-16 grid gap-8 md:grid-cols-2 lg:grid-cols-3">
-
                     {testimonials.map((testimonial) => (
-
                         <div
                             key={testimonial.id}
-                            className="rounded-3xl border border-white/10 bg-white/5 p-8 backdrop-blur-xl transition duration-300 hover:-translate-y-2 hover:border-cyan-400"
+                            className="flex min-h-[500px] flex-col rounded-3xl border border-white/10 bg-white/5 p-8 backdrop-blur-xl transition-all duration-300 hover:-translate-y-2 hover:border-cyan-400"
                         >
-
-                            <div className="mb-4 flex text-yellow-400">
-
-                                {Array.from({
-                                    length: testimonial.rating,
-                                }).map((_, index) => (
-
+                            {/* Rating */}
+                            <div className="mb-5 flex gap-1 text-xl text-yellow-400">
+                                {Array.from({ length: testimonial.rating }).map((_, index) => (
                                     <span key={index}>★</span>
-
                                 ))}
-
                             </div>
 
-                            <p className="leading-8 text-slate-300">
+                            {/* Testimonial */}
+                            <p className="flex-1 leading-8 text-slate-300">
                                 "{testimonial.message}"
                             </p>
 
-                            <div className="mt-8 flex items-center gap-4">
-
+                            {/* Client */}
+                            <div className="mt-8 flex items-center gap-4 border-t border-white/10 pt-6">
                                 <Image
                                     src={testimonial.image || "/avatar.png"}
                                     alt={testimonial.name}
                                     width={56}
                                     height={56}
-                                    className="rounded-full object-cover"
+                                    className="h-14 w-14 rounded-full object-cover"
                                 />
 
                                 <div>
-
                                     <h4 className="font-bold text-white">
                                         {testimonial.name}
                                     </h4>
@@ -86,24 +71,15 @@ export default function Testimonials({
                                         {testimonial.position}
                                     </p>
 
-                                    <p className="text-xs text-cyan-400">
+                                    <p className="text-sm font-medium text-cyan-400">
                                         {testimonial.company}
                                     </p>
-
                                 </div>
-
                             </div>
-
                         </div>
-
                     ))}
-
                 </div>
-
             </div>
-
         </section>
-
     );
-
 }
