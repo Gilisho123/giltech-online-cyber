@@ -12,7 +12,7 @@ interface StatsProps {
 
 export default function Stats({ stats }: StatsProps) {
   return (
-    <section className="bg-[#021b2a] py-20">
+    <section className="bg-[#081225] py-20">
       <div className="mx-auto max-w-5xl px-4 sm:px-6">
         <div className="mx-auto max-w-[820px] rounded-[28px] border border-slate-200 bg-white p-3 shadow-sm sm:p-5 lg:p-6">
           <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
