@@ -8,13 +8,13 @@ export const siteConfig = {
     description:
         "Professional online services, tax consultancy, data analysis, software development, AI solutions, business consultancy, and digital services for individuals and businesses.",
 
-    url: "https://www.giltech.co.ke",
+    url: "https://giltechonlinecyber.vercel.app/",
 
     logo: "/images/logo.png",
 
     favicon: "/favicon.ico",
 
-    email: "info@giltech.co.ke",
+    email: "giltechonlinecyber@gmail.com",
 
     phone: "+254758220554",
 
@@ -22,7 +22,7 @@ export const siteConfig = {
 
     address: {
         country: "Kenya",
-        city: "Nairobi",
+        city: "Nakuru",
     },
 
     social: {
